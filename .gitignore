@@ -1,0 +1,14 @@
+# Ignore environment variables in all folders
+.env
+**/.env
+.env.local
+.env.development
+.env.production
+
+# Ignore node_modules (highly recommended for both client and server)
+node_modules/
+**/node_modules/
+
+# Ignore build/dist folders (optional but recommended)
+build/
+dist/
