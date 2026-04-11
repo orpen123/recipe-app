@@ -16,18 +16,18 @@ const adminRoutes = require('./routes/adminRoutes');
 const app = express();
 const server = http.createServer(app);
 
-// function isAllowedOrigin(origin) {
-//   if (!origin) return true;
-//   const allowed = process.env.CLIENT_URL || '';
-//   if (allowed && origin === allowed) return true;
-//   if (/^http:\/\/localhost:\d+$/.test(origin)) return true;
-//   if (/^http:\/\/192\.168\./.test(origin)) return true;
-//   if (/\.vercel\.app$/.test(origin)) return true;
-//   return false;
-// }
 function isAllowedOrigin(origin) {
-  return true;
+  if (!origin) return true;
+  const allowed = process.env.CLIENT_URL || '';
+  if (allowed && origin === allowed) return true;
+  if (/^http:\/\/localhost:\d+$/.test(origin)) return true;
+  if (/^http:\/\/192\.168\./.test(origin)) return true;
+  if (/\.vercel\.app$/.test(origin)) return true;
+  return false;
 }
+// function isAllowedOrigin(origin) {
+//   return true;
+// }
 
 const io = new Server(server, {
   cors: {
