@@ -22,6 +22,7 @@ function isAllowedOrigin(origin) {
   if (allowed && origin === allowed) return true;
   if (/^http:\/\/localhost:\d+$/.test(origin)) return true;
   if (/^http:\/\/192\.168\./.test(origin)) return true;
+  if (/\.vercel\.app$/.test(origin)) return true;
   return false;
 }
 
@@ -111,7 +112,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {});
+  socket.on('disconnect', () => { });
 });
 
 const PORT = process.env.PORT || 5000;
