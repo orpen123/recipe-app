@@ -2,45 +2,46 @@ const db = require('../config/db');
 
 const recipeController = {
 
-  // GET /api/recipes
   getAllRecipes: async (req, res) => {
-    try {
-      const { search } = req.query;
-      const userId = req.user?.userId || null;
-      
-      let query = `
-        SELECT r.*, u.username, u.avatar,
-          COUNT(DISTINCT l.user_id) as likes_count,
-          COUNT(DISTINCT c.id) as comments_count
-          ${userId ? ', MAX(CASE WHEN l2.user_id = ? THEN 1 ELSE 0 END) as isLiked, MAX(CASE WHEN sr.user_id = ? THEN 1 ELSE 0 END) as isSaved' : ''}
-        FROM recipes r
-        JOIN users u ON r.user_id = u.id
-        LEFT JOIN likes l ON r.id = l.recipe_id
-        LEFT JOIN comments c ON r.id = c.recipe_id
-        ${userId ? 'LEFT JOIN likes l2 ON r.id = l2.recipe_id AND l2.user_id = ? LEFT JOIN saved_recipes sr ON r.id = sr.recipe_id AND sr.user_id = ?' : ''}
-      `;
-      const params = [];
-      if (userId) {
-        params.push(userId, userId, userId, userId);
-      }
-
-      if (search) {
-        query += ` WHERE (r.title LIKE ? OR r.description LIKE ? OR u.username LIKE ?)`;
-        const term = `%${search}%`;
-        params.push(term, term, term);
-      }
-
-      query += ' GROUP BY r.id ORDER BY r.created_at DESC';
-
-      const [recipes] = await db.query(query, params);
-      res.json(recipes);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Server error' });
+  try {
+    const { search } = req.query;
+    const userId = req.user?.userId || null;
+    
+    let query = `
+      SELECT r.*, u.username, u.avatar,
+        COUNT(DISTINCT l.user_id) as likes_count,
+        COUNT(DISTINCT c.id) as comments_count,
+        ROUND(AVG(rv.rating), 1) AS avg_rating,
+        COUNT(DISTINCT rv.id) AS total_reviews
+        ${userId ? ', MAX(CASE WHEN l2.user_id = ? THEN 1 ELSE 0 END) as isLiked, MAX(CASE WHEN sr.user_id = ? THEN 1 ELSE 0 END) as isSaved' : ''}
+      FROM recipes r
+      JOIN users u ON r.user_id = u.id
+      LEFT JOIN likes l ON r.id = l.recipe_id
+      LEFT JOIN comments c ON r.id = c.recipe_id
+      LEFT JOIN reviews rv ON r.id = rv.recipe_id
+      ${userId ? 'LEFT JOIN likes l2 ON r.id = l2.recipe_id AND l2.user_id = ? LEFT JOIN saved_recipes sr ON r.id = sr.recipe_id AND sr.user_id = ?' : ''}
+    `;
+    const params = [];
+    if (userId) {
+      params.push(userId, userId, userId, userId);
     }
-  },
 
-  // GET /api/recipes/saved
+    if (search) {
+      query += ` WHERE (r.title LIKE ? OR r.description LIKE ? OR u.username LIKE ?)`;
+      const term = `%${search}%`;
+      params.push(term, term, term);
+    }
+
+    query += ' GROUP BY r.id ORDER BY r.created_at DESC';
+
+    const [recipes] = await db.query(query, params);
+    res.json(recipes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+},
+
   getSavedRecipes: async (req, res) => {
     try {
       const userId = req.user.userId;
@@ -63,10 +64,12 @@ const recipeController = {
     }
   },
 
-  // GET /api/recipes/:id
   getRecipeById: async (req, res) => {
     try {
-      const { id } = req.params;
+
+      const { idAndSlug } = req.params;
+      const id = idAndSlug.split('-')[0];
+
       const userId = req.user?.userId || null;
 
       const [recipes] = await db.query(`
@@ -79,6 +82,8 @@ const recipeController = {
       if (recipes.length === 0) {
         return res.status(404).json({ error: 'Recipe not found' });
       }
+
+      const recipe = recipes[0];
 
       const [ingredients] = await db.query(
         'SELECT * FROM ingredients WHERE recipe_id = ?', [id]
@@ -115,7 +120,6 @@ const recipeController = {
     }
   },
 
-  // POST /api/recipes
   createRecipe: async (req, res) => {
     try {
       const { title, description, image, category, prep_time, cook_time, servings, ingredients } = req.body;
@@ -136,11 +140,36 @@ const recipeController = {
       if (ingredients && ingredients.length > 0) {
         const validIngredients = ingredients.filter(ing => ing.name?.trim());
         if (validIngredients.length > 0) {
-          const ingredientValues = validIngredients.map(ing => [recipeId, ing.name.trim(), ing.quantity || '']);
-          await db.query(
-            'INSERT INTO ingredients (recipe_id, name, quantity) VALUES ?',
-            [ingredientValues]
-          );
+          for (const ing of validIngredients) {
+            await db.query(
+              'INSERT INTO ingredients (recipe_id, name, quantity) VALUES (?, ?, ?)',
+              [recipeId, ing.name.trim(), ing.quantity || '']
+            ).catch(err => console.error('Ingredient insert error:', err));
+          }
+        }
+      }
+
+      const [followers] = await db.query('SELECT follower_id FROM follows WHERE following_id = ?', [userId]);
+      if (followers.length > 0) {
+        const [userRows] = await db.query('SELECT username FROM users WHERE id = ?', [userId]);
+        const creatorName = userRows[0]?.username || 'Someone';
+        const notifMessage = `✨ ${creatorName} posted a new recipe: "${title}"`;
+
+        const notifValues = followers.map(f => [f.follower_id, 'new_recipe', recipeId, notifMessage]);
+        await db.query(
+          'INSERT INTO notifications (user_id, type, related_id, message) VALUES ?',
+          [notifValues]
+        ).catch(err => console.error('Error inserting follower notifications', err));
+
+        if (req.io) {
+          followers.forEach(f => {
+            req.io.to(f.follower_id.toString()).emit('new_notification', {
+              type: 'new_recipe',
+              message: notifMessage,
+              recipe_id: recipeId,
+              recipe_title: title
+            });
+          });
         }
       }
 
@@ -151,7 +180,6 @@ const recipeController = {
     }
   },
 
-  // PUT /api/recipes/:id
   updateRecipe: async (req, res) => {
     try {
       const { id } = req.params;
@@ -182,13 +210,13 @@ const recipeController = {
         await db.query('DELETE FROM ingredients WHERE recipe_id = ?', [id]);
 
         const validIngredients = ingredients.filter(ing => ing.name?.trim());
-
         if (validIngredients.length > 0) {
-          const ingredientValues = validIngredients.map(ing => [id, ing.name.trim(), ing.quantity || '']);
-          await db.query(
-            'INSERT INTO ingredients (recipe_id, name, quantity) VALUES ?',
-            [ingredientValues]
-          );
+          for (const ing of validIngredients) {
+            await db.query(
+              'INSERT INTO ingredients (recipe_id, name, quantity) VALUES (?, ?, ?)',
+              [id, ing.name.trim(), ing.quantity || '']
+            ).catch(err => console.error('Ingredient update error:', err));
+          }
         }
       }
 
@@ -199,7 +227,6 @@ const recipeController = {
     }
   },
 
-  // DELETE /api/recipes/:id
   deleteRecipe: async (req, res) => {
     try {
       const { id } = req.params;
@@ -223,7 +250,6 @@ const recipeController = {
     }
   },
 
-  // POST /api/recipes/:id/like
   likeRecipe: async (req, res) => {
     try {
       const { id } = req.params;
@@ -243,14 +269,61 @@ const recipeController = {
         [userId, id]
       );
 
-      res.json({ message: 'Recipe liked successfully' });
+      const [recipes] = await db.query(
+        'SELECT user_id, title FROM recipes WHERE id = ?',
+        [id]
+      );
+
+      if (recipes.length > 0 && recipes[0].user_id !== userId) {
+        const [liker] = await db.query(
+          'SELECT username FROM users WHERE id = ?',
+          [userId]
+        );
+        const likerName = liker[0]?.username || 'Someone';
+        const notifMessage = `❤️ ${likerName} liked your recipe "${recipes[0].title}"`;
+        await db.query(
+          'INSERT INTO notifications (user_id, type, related_id, message) VALUES (?, ?, ?, ?)',
+          [recipes[0].user_id, 'like', id, notifMessage]
+        ).catch(e => console.error('Failed to insert like notification', e));
+
+        if (req.io) {
+          req.io.to(recipes[0].user_id.toString()).emit('new_notification', {
+            type: 'like',
+            message: notifMessage,
+            recipe_id: id,
+            recipe_title: recipes[0].title,
+          });
+        }
+      }
+
+      const [[{ count }]] = await db.query(
+        'SELECT COUNT(*) as count FROM likes WHERE recipe_id = ?',
+        [id]
+      );
+
+      res.json({ message: 'Recipe liked successfully', likes_count: count });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Server error' });
     }
   },
 
-  // DELETE /api/recipes/:id/like
+  getRecipeLikes: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const [likes] = await db.query(`
+        SELECT u.id, u.username, u.avatar 
+        FROM likes l
+        JOIN users u ON l.user_id = u.id
+        WHERE l.recipe_id = ?
+      `, [id]);
+      res.json(likes);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  },
+
   unlikeRecipe: async (req, res) => {
     try {
       const { id } = req.params;
@@ -261,14 +334,37 @@ const recipeController = {
         [userId, id]
       );
 
-      res.json({ message: 'Recipe unliked successfully' });
+      const [recipes] = await db.query(
+        'SELECT user_id, title FROM recipes WHERE id = ?',
+        [id]
+      );
+
+      if (recipes.length > 0 && recipes[0].user_id !== userId) {
+        const [liker] = await db.query(
+          'SELECT username FROM users WHERE id = ?',
+          [userId]
+        );
+        const likerName = liker[0]?.username || 'Someone';
+        const notifMessage = `❤️ ${likerName} liked your recipe "${recipes[0].title}"`;
+        
+        await db.query(
+          'DELETE FROM notifications WHERE user_id = ? AND type = "like" AND related_id = ? AND message = ?',
+          [recipes[0].user_id, id, notifMessage]
+        ).catch(e => console.error('Failed to delete like notification', e));
+      }
+
+      const [[{ count }]] = await db.query(
+        'SELECT COUNT(*) as count FROM likes WHERE recipe_id = ?',
+        [id]
+      );
+
+      res.json({ message: 'Recipe unliked successfully', likes_count: count });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Server error' });
     }
   },
 
-  // POST /api/recipes/:id/save
   saveRecipe: async (req, res) => {
     try {
       const { id } = req.params;
@@ -295,7 +391,6 @@ const recipeController = {
     }
   },
 
-  // DELETE /api/recipes/:id/save
   unsaveRecipe: async (req, res) => {
     try {
       const { id } = req.params;

@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 const messageController = {
-  // GET /api/messages/conversations
+  
   getConversations: async (req, res) => {
     try {
       const userId = req.user.userId;
@@ -38,7 +38,6 @@ const messageController = {
     }
   },
 
-  // GET /api/messages/:userId
   getMessagesWithUser: async (req, res) => {
     try {
       const { userId: otherUserId } = req.params;
@@ -62,7 +61,6 @@ const messageController = {
     }
   },
 
-  // POST /api/messages/:userId
   sendMessage: async (req, res) => {
     try {
       const { userId: receiverId } = req.params;
@@ -73,7 +71,6 @@ const messageController = {
         return res.status(400).json({ error: 'Message content is required' });
       }
 
-      // Can't message yourself
       if (parseInt(receiverId) === senderId) {
         return res.status(400).json({ error: 'Cannot send message to yourself' });
       }
@@ -85,13 +82,34 @@ const messageController = {
 
       const [senderInfo] = await db.query('SELECT username, avatar FROM users WHERE id = ?', [senderId]);
 
-      // Create notification
-      await db.query(
-        'INSERT INTO notifications (user_id, type, related_id, message) VALUES (?, ?, ?, ?)',
-        [receiverId, 'message', senderId, `New message from ${senderInfo[0].username}`]
-      ).catch(e => console.error('Failed to insert notification', e));
+      let isReceiverActive = false;
+      if (req.io) {
+        const receiverSockets = await req.io.in(receiverId.toString()).fetchSockets();
+        for (const s of receiverSockets) {
+          if (s.activeChat === senderId.toString()) {
+            isReceiverActive = true;
+            break;
+          }
+        }
+      }
 
-      res.status(201).json({
+      if (!isReceiverActive) {
+        const notifMessage = `✉️ New message from ${senderInfo[0].username}`;
+        await db.query(
+          'INSERT INTO notifications (user_id, type, related_id, message) VALUES (?, ?, ?, ?)',
+          [receiverId, 'message', senderId, notifMessage]
+        ).catch(e => console.error('Failed to insert notification', e));
+
+        if (req.io) {
+          req.io.to(receiverId.toString()).emit('new_notification', {
+            type: 'message',
+            message: notifMessage,
+            sender_id: senderId,
+          });
+        }
+      }
+
+      const messagePayload = {
         id: result.insertId,
         sender_id: senderId,
         receiver_id: parseInt(receiverId),
@@ -99,7 +117,33 @@ const messageController = {
         created_at: new Date().toISOString(),
         sender_username: senderInfo[0].username,
         sender_avatar: senderInfo[0].avatar
-      });
+      };
+
+      if (req.io) {
+        req.io.to(receiverId.toString()).emit('new_message', messagePayload);
+        req.io.to(senderId.toString()).emit('new_message', messagePayload);
+      }
+
+      res.status(201).json(messagePayload);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  },
+
+  deleteConversation: async (req, res) => {
+    try {
+      const { userId: otherUserId } = req.params;
+      const userId = req.user.userId;
+
+      await db.query(
+        `DELETE FROM messages 
+         WHERE (sender_id = ? AND receiver_id = ?) 
+            OR (sender_id = ? AND receiver_id = ?)`,
+        [userId, otherUserId, otherUserId, userId]
+      );
+
+      res.json({ message: 'Conversation deleted' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Server error' });

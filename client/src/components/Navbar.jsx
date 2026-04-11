@@ -1,16 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getNotifications } from '../api/services';
+import { getNotifications, markAllNotificationsAsRead } from '../api/services';
 import {
     Search, X, Menu, ChevronDown,
     Bookmark, Bell, Mail,
     Home, Info, Phone, UtensilsCrossed,
-    PlusSquare, User, LogOut, ArrowRight,
+    PlusSquare, User, LogOut, ArrowRight, Shield
 } from 'lucide-react';
-
-// ─── Variants ────────────────────────────────────────────────────────────────
 
 const dropdownVariants = {
     hidden: { opacity: 0, y: -6, scale: 0.96 },
@@ -61,7 +60,32 @@ const iconSpin = {
     exit: { rotate: 90, opacity: 0, transition: { duration: 0.15 } },
 };
 
-// ─── Component ───────────────────────────────────────────────────────────────
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins  = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days  = Math.floor(diff / 86400000);
+  if (mins < 1)   return 'just now';
+  if (mins < 60)  return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7)   return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function notifLink(notif) {
+  switch (notif.type) {
+    case 'like':
+    case 'comment':
+    case 'new_recipe': {
+      const toSlug = (title) =>
+        title?.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-") || "";
+      return `/recipe/${notif.related_id}-${toSlug(notif.related_recipe_title)}`;
+    }
+    case 'message': return `/messages/${notif.related_id}`;
+    case 'follow':  return `/profile/${notif.related_username || notif.related_id}`;
+    default:        return '#';
+  }
+}
 
 export default function Navbar() {
     const { user, logoutUser } = useAuth();
@@ -73,7 +97,9 @@ export default function Navbar() {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [scrolled, setScrolled] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
+    const [recentNotifications, setRecentNotifications] = useState([]);
+
+    const { unreadCount, setUnread, resetUnread } = useNotifications();
 
     const navRef = useRef(null);
     const searchInputRef = useRef(null);
@@ -84,15 +110,17 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', fn);
     }, []);
 
-    useEffect(() => {
-        if (user) {
-            getNotifications()
-                .then(res => setUnreadCount(res.data.filter(n => !n.is_read).length))
-                .catch(console.error);
-        } else {
-            setUnreadCount(0);
-        }
-    }, [user, location.pathname]);
+    const fetchUnread = useCallback(() => {
+        if (!user) { setUnread(0); return; }
+        getNotifications()
+            .then(res => {
+                setRecentNotifications(res.data);
+                setUnread(res.data.filter(n => !n.is_read).length);
+            })
+            .catch(console.error);
+    }, [user, setUnread]);
+    
+    useEffect(() => { fetchUnread(); }, [fetchUnread, location.pathname, unreadCount]);
 
     const closeAll = useCallback(() => {
         setMenuOpen(false);
@@ -126,12 +154,15 @@ export default function Navbar() {
         }
     };
 
-    const toggleDropdown = (key) =>
+    const toggleDropdown = (key) => {
+        if (key === 'notifications' && dropdownOpen !== 'notifications' && unreadCount > 0) {
+            markAllNotificationsAsRead().catch(console.error);
+            resetUnread();
+        }
         setDropdownOpen((prev) => (prev === key ? null : key));
+    };
 
     const isActive = (path) => location.pathname === path;
-
-    // ─── Class helpers (green palette) ───────────────────────────────────────
 
     const desktopLinkCls = (path) =>
         `flex items-center gap-1.5 px-3 py-2 uppercase rounded-md text-[9px] lg:text-[10px]] font-bold transition-colors ${isActive(path)
@@ -150,8 +181,6 @@ export default function Navbar() {
             ? 'bg-[#E8F7F2] text-[#1F7A56]'
             : 'text-gray-700 hover:bg-[#E8F7F2] hover:text-[#2A9D72]'
         }`;
-
-    // ─── Data ─────────────────────────────────────────────────────────────
 
     const inlineLinks = [
         { to: '/', label: 'Home' },
@@ -179,7 +208,7 @@ export default function Navbar() {
     ];
 
     const profileLinks = [
-        { to: `/profile/${user?.id}`, label: 'My Profile', Icon: User },
+        { to: `/profile/${user?.username}`, label: 'My Profile', Icon: User },
         { to: '/favorites', label: 'Saved Recipes', Icon: Bookmark },
         { to: '/create', label: 'Create Recipe', Icon: PlusSquare },
         { to: '/messages', label: 'Messages', Icon: Mail },
@@ -193,7 +222,7 @@ export default function Navbar() {
         { to: '/create', label: 'Create Recipe', Icon: PlusSquare },
         { to: '/favorites', label: 'Saved Recipes', Icon: Bookmark },
         { to: '/messages', label: 'Messages', Icon: Mail },
-        { to: '/notifications', label: 'Notifications', Icon: Bell, badge: unreadCount > 0 },
+        { to: '/notifications', label: 'Notifications', Icon: Bell, badge: unreadCount },
     ];
 
     return (
@@ -201,24 +230,24 @@ export default function Navbar() {
             ref={navRef}
             className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
         >
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3 relative'>
+            <div className='max-w-7xl mx-auto px-3 min-[320px]:px-4 sm:px-6 h-12 min-[320px]:h-14 flex items-center justify-between gap-1.5 min-[320px]:gap-3 relative'>
 
-                {/* Logo */}
+                {}
                 <Link to='/' onClick={closeAll} className='flex items-center gap-1.5'>
                     <motion.span
-                        className='inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-900 text-white'
+                        className='inline-flex items-center justify-center w-6 min-[320px]:w-8 h-6 min-[320px]:h-8 rounded-md min-[320px]:rounded-lg bg-gray-900 text-white'
                         whileHover={{ rotate: [0, -15, 15, -10, 0], transition: { duration: 0.5 } }}
                     >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="w-3.5 h-3.5 min-[320px]:w-4 min-[320px]:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
                         </svg>
                     </motion.span>
-                    <span className='text-xl font-bold'>
+                    <span className='text-lg min-[320px]:text-xl font-bold'>
                         <span className="text-[#2A9D72] italic">Matbakhy</span>
                     </span>
                 </Link>
 
-                {/* Desktop Left */}
+                {}
                 <div className='hidden md:flex  justify-end items-center gap-1 flex-1'>
                     {inlineLinks.map(({ to, label }) => (
                         <Link key={to + label} to={to} onClick={closeAll} className={desktopLinkCls(to)}>
@@ -264,7 +293,7 @@ export default function Navbar() {
                     ))}
                 </div>
 
-                {/* Desktop Right */}
+                {}
                 <div className='hidden md:flex items-center gap-1 flex-1 justify-end'>
                     <motion.button
                         whileTap={{ scale: 0.9 }}
@@ -289,18 +318,68 @@ export default function Navbar() {
                         <>
                             {[
                                 { to: '/favorites', Icon: Bookmark, title: 'Saved' },
-                                { to: '/notifications', Icon: Bell, title: 'Notifications', badge: unreadCount > 0 },
                                 { to: '/messages', Icon: Mail, title: 'Messages' },
-                            ].map(({ to, Icon, title, badge }) => (
+                            ].map(({ to, Icon, title }) => (
                                 <motion.div key={to} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                                     <Link to={to} title={title} className={`relative p-2 rounded-xl transition-colors block ${isActive(to) ? 'text-[#1F7A56] bg-[#E8F7F2]' : 'text-gray-500 hover:text-[#2A9D72] hover:bg-[#E8F7F2]'}`}>
                                         <Icon size={16} strokeWidth={1.8} />
-                                        {badge && (
-                                            <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full border border-white" />
-                                        )}
                                     </Link>
                                 </motion.div>
                             ))}
+
+                            <div className='relative'>
+                                <motion.button
+                                    whileTap={{ scale: 0.97 }}
+                                    onClick={() => toggleDropdown('notifications')}
+                                    className={`relative p-2 rounded-xl transition-colors ${dropdownOpen === 'notifications' ? 'text-[#1F7A56] bg-[#E8F7F2]' : 'text-gray-500 hover:text-[#2A9D72] hover:bg-[#E8F7F2]'}`}
+                                >
+                                    <Bell size={16} strokeWidth={1.8} />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-0.5 flex items-center justify-center bg-red-500 text-white text-[9px] font-black rounded-full border border-white leading-none">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    )}
+                                </motion.button>
+                                <AnimatePresence>
+                                    {dropdownOpen === 'notifications' && (
+                                        <motion.div
+                                            variants={dropdownVariants}
+                                            initial='hidden' animate='visible' exit='exit'
+                                            className='absolute top-full right-0 mt-2 bg-white shadow-2xl rounded-2xl py-2 w-72 border border-gray-100 z-50 origin-top-right overflow-hidden flex flex-col'
+                                        >
+                                            <div className='px-4 py-2 border-b border-gray-100 flex items-center justify-between'>
+                                                <span className='text-xs font-bold text-gray-900'>Notifications</span>
+                                            </div>
+                                            <div className='max-h-[300px] overflow-y-auto custom-scroll'>
+                                                {recentNotifications.length === 0 ? (
+                                                    <div className='p-4 text-center text-gray-400 text-xs'>No notifications yet</div>
+                                                ) : (
+                                                    <>
+                                                        {recentNotifications.slice(0, 8).map((n) => (
+                                                            <Link key={n.id} to={notifLink(n)} className='flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0' onClick={() => setDropdownOpen(null)}>
+                                                                <div className='flex-1 min-w-0'>
+                                                                    <p className='text-[11.5px] leading-snug text-gray-800 line-clamp-2'>{n.message}</p>
+                                                                    <p className='text-[10px] text-gray-400 mt-1'>{timeAgo(n.created_at)}</p>
+                                                                </div>
+                                                            </Link>
+                                                        ))}
+                                                        <div className='border-t border-gray-50 p-2'>
+                                                            <Link 
+                                                                to="/notifications"
+                                                                onClick={() => setDropdownOpen(null)}
+                                                                className='w-full block text-center text-[11px] font-bold text-[#2A9D72] hover:underline py-1'
+                                                            >
+                                                                See all notifications
+                                                            </Link>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
                             <div className='relative'>
                                 <motion.button
                                     whileTap={{ scale: 0.97 }}
@@ -329,6 +408,14 @@ export default function Navbar() {
                                                 <p className='text-xs font-bold text-gray-900 truncate'>{user.username}</p>
                                                 <p className='text-xs text-gray-400 truncate mt-0.5'>{user.email}</p>
                                             </div>
+                                            {user.isAdmin && (
+                                                <motion.div variants={dropdownItemVariants} initial='hidden' animate='visible'>
+                                                    <Link to='/admin' onClick={() => setDropdownOpen(null)} className={dropdownLinkCls('/admin')}>
+                                                        <Shield size={14} strokeWidth={1.8} />
+                                                        Admin Panel
+                                                    </Link>
+                                                </motion.div>
+                                            )}
                                             {profileLinks.map(({ to, label, Icon }, i) => (
                                                 <motion.div key={to + label} custom={i} variants={dropdownItemVariants} initial='hidden' animate='visible'>
                                                     <Link to={to} onClick={() => setDropdownOpen(null)} className={dropdownLinkCls(to)}>
@@ -358,29 +445,29 @@ export default function Navbar() {
                     )}
                 </div>
 
-                {/* Mobile Icons */}
-                <div className='md:hidden flex items-center gap-1'>
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setSearchOpen(!searchOpen); setMenuOpen(false); }} className='p-2 rounded-xl text-gray-500 hover:text-[#2A9D72] transition-colors'>
+                {}
+                <div className='md:hidden flex items-center gap-0.5 min-[320px]:gap-1'>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setSearchOpen(!searchOpen); setMenuOpen(false); }} className='p-1.5 min-[320px]:p-2 rounded-lg min-[320px]:rounded-xl text-gray-500 hover:text-[#2A9D72] transition-colors'>
                         <AnimatePresence mode='wait'>
                             {searchOpen ? (
-                                <motion.span key='x' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><X size={20} /></motion.span>
+                                <motion.span key='x' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><X className="w-4 h-4 min-[320px]:w-5 min-[320px]:h-5" /></motion.span>
                             ) : (
-                                <motion.span key='s' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><Search size={20} /></motion.span>
+                                <motion.span key='s' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><Search className="w-4 h-4 min-[320px]:w-5 min-[320px]:h-5" /></motion.span>
                             )}
                         </AnimatePresence>
                     </motion.button>
-                    <motion.button whileTap={{ scale: 0.9 }} className='flex items-center justify-center w-9 h-9' onClick={() => { setMenuOpen(!menuOpen); setSearchOpen(false); }}>
+                    <motion.button whileTap={{ scale: 0.9 }} className='flex items-center justify-center w-8 min-[320px]:w-9 h-8 min-[320px]:h-9' onClick={() => { setMenuOpen(!menuOpen); setSearchOpen(false); }}>
                         <AnimatePresence mode='wait'>
                             {menuOpen ? (
-                                <motion.span key='x' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><X size={22} className='text-gray-600' /></motion.span>
+                                <motion.span key='x' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><X className='text-gray-600 w-5 h-5 min-[320px]:w-[22px] min-[320px]:h-[22px]' /></motion.span>
                             ) : (
-                                <motion.span key='m' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><Menu size={22} className='text-gray-600' /></motion.span>
+                                <motion.span key='m' variants={iconSpin} initial='hidden' animate='visible' exit='exit' className='block'><Menu className='text-gray-600 w-5 h-5 min-[320px]:w-[22px] min-[320px]:h-[22px]' /></motion.span>
                             )}
                         </AnimatePresence>
                     </motion.button>
                 </div>
 
-                {/* ══ Desktop Search Overlay ══════════════════════════════════ */}
+                {}
                 <AnimatePresence>
                     {searchOpen && (
                         <motion.div
@@ -413,7 +500,7 @@ export default function Navbar() {
                 </AnimatePresence>
             </div>
 
-            {/* ══ Mobile Search Bar ══════════════════════════════════════ */}
+            {}
             <AnimatePresence>
                 {searchOpen && (
                     <motion.div
@@ -430,7 +517,7 @@ export default function Navbar() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder='Search recipes…'
-                                className='flex-1 text-sm py-1 outline-none text-gray-700 placeholder-gray-400 bg-transparent'
+                                className='flex-1 text-base py-1 outline-none text-gray-700 placeholder-gray-400 bg-transparent'
                             />
                             {searchQuery && (
                                 <button type='button' onClick={() => setSearchQuery('')}>
@@ -442,7 +529,7 @@ export default function Navbar() {
                 )}
             </AnimatePresence>
 
-            {/* Mobile Backdrop & Menu (Rest of the original code remains same) */}
+            {}
             <AnimatePresence>
                 {menuOpen && (
                     <>
@@ -462,7 +549,7 @@ export default function Navbar() {
                             <div className='max-h-[calc(100vh-56px)] overflow-y-auto px-4 py-4 space-y-1'>
                                 {user && (
                                     <motion.div variants={mobileItemVariants}>
-                                        <Link to={`/profile/${user.id}`} onClick={() => setMenuOpen(false)} className='flex items-center gap-3 p-3.5 rounded-2xl mb-3' style={{ background: 'linear-gradient(to right, #E8F7F2, #f0fbf7)' }}>
+                                        <Link to={`/profile/${user.username}`} onClick={() => setMenuOpen(false)} className='flex items-center gap-3 p-3.5 rounded-2xl mb-3' style={{ background: 'linear-gradient(to right, #E8F7F2, #f0fbf7)' }}>
                                             {user.avatar ? (
                                                 <img src={user.avatar} alt={user.username} className='w-10 h-10 rounded-xl object-cover border-2' style={{ borderColor: '#2A9D72' }} />
                                             ) : (
@@ -476,12 +563,27 @@ export default function Navbar() {
                                         </Link>
                                     </motion.div>
                                 )}
+                                {user?.isAdmin && (
+                                    <motion.div variants={mobileItemVariants}>
+                                        <Link to='/admin' onClick={() => setMenuOpen(false)} className={mobileLinkCls('/admin')}>
+                                            <div className="relative">
+                                                <Shield size={17} strokeWidth={1.8} />
+                                            </div>
+                                            Admin Panel
+                                            {isActive('/admin') && <span className='ml-auto w-2 h-2 rounded-full' style={{ background: '#2A9D72' }} />}
+                                        </Link>
+                                    </motion.div>
+                                )}
                                 {mobileLinks.map(({ to, label, Icon, badge }, i) => (
                                     <motion.div key={i} variants={mobileItemVariants}>
                                         <Link to={to} onClick={() => setMenuOpen(false)} className={mobileLinkCls(to)}>
                                             <div className="relative">
                                                 <Icon size={17} strokeWidth={1.8} />
-                                                {badge && <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500 shadow-sm shadow-red-200" />}
+                                                {badge > 0 && (
+                                                    <span className="absolute -top-1 -right-1 min-w-[14px] h-3.5 px-0.5 flex items-center justify-center bg-red-500 text-white text-[8px] font-black rounded-full border border-white">
+                                                        {badge > 9 ? '9+' : badge}
+                                                    </span>
+                                                )}
                                             </div>
                                             {label}
                                             {isActive(to) && <span className='ml-auto w-2 h-2 rounded-full' style={{ background: '#2A9D72' }} />}

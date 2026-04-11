@@ -1,10 +1,11 @@
 const db = require('../config/db');
 
 const commentController = {
-  // GET /api/recipes/:id/comments
+  
   getComments: async (req, res) => {
     try {
-      const { id } = req.params;
+      const { idAndSlug } = req.params;
+      const id = idAndSlug?.split('-')[0];
 
       const [comments] = await db.query(`
         SELECT c.*, u.username, u.avatar
@@ -21,10 +22,10 @@ const commentController = {
     }
   },
 
-  // POST /api/recipes/:id/comments
   addComment: async (req, res) => {
     try {
-      const { id } = req.params;
+      const { idAndSlug } = req.params;
+      const id = idAndSlug?.split('-')[0];
       const { content } = req.body;
       const userId = req.user.userId;
 
@@ -37,23 +38,26 @@ const commentController = {
         [userId, id, content]
       );
 
-      res.status(201).json({
-        message: 'Comment added successfully',
-        commentId: result.insertId
-      });
+      const [rows] = await db.query(
+        `SELECT c.*, u.username, u.avatar
+         FROM comments c
+         JOIN users u ON c.user_id = u.id
+         WHERE c.id = ?`,
+        [result.insertId]
+      );
+
+      res.status(201).json(rows[0]);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Server error' });
     }
   },
 
-  // DELETE /api/comments/:id
   deleteComment: async (req, res) => {
     try {
       const { id } = req.params;
       const userId = req.user.userId;
 
-      // Check if comment exists and user is owner
       const [comments] = await db.query(
         'SELECT * FROM comments WHERE id = ?',
         [id]

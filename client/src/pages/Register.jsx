@@ -5,8 +5,6 @@ import { register, login } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import registerBg from '../assets/registerBg.jpg';
 
-// ─── Animation Variants ──────────────────────────────────────────────────────
-
 const panelVariants = {
   hidden: { opacity: 0, x: -60 },
   visible: {
@@ -79,8 +77,6 @@ const buttonVariants = {
   },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function Register() {
   const { loginUser } = useAuth();
   const navigate = useNavigate();
@@ -114,7 +110,6 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
 
-      {/* ── Left: Hero Panel ── */}
       <motion.div
         variants={panelVariants}
         initial="hidden"
@@ -156,15 +151,14 @@ export default function Register() {
         </div>
       </motion.div>
 
-      {/* ── Right: Form Panel ── */}
-      <div className="flex-1 flex flex-col justify-center px-5 py-20 sm:px-12 lg:pb-16 bg-white lg:bg-gray-50">
+      <div className="flex-1 flex flex-col justify-center px-4 min-[320px]:px-5 py-12 min-[320px]:py-20 sm:px-12 lg:pb-16 bg-white lg:bg-gray-50">
         <motion.div
           variants={formContainerVariants}
           initial="hidden"
           animate="visible"
           className="w-full max-w-md mx-auto"
         >
-          {/* Logo */}
+          
           <motion.div variants={itemVariants} className="mb-8 lg:mb-12">
             <Link
               to="/"
@@ -182,12 +176,12 @@ export default function Register() {
             </Link>
           </motion.div>
 
-          {/* Heading */}
-          <motion.div variants={itemVariants} className="mb-7">
-            <h1 className="text-2xl sm:text-4xl font-black text-gray-900 mb-1.5">
+          {}
+          <motion.div variants={itemVariants} className="mb-5 min-[320px]:mb-7">
+            <h1 className="text-xl min-[320px]:text-2xl sm:text-4xl font-black text-gray-900 mb-1.5">
               Create Account
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 text-xs min-[320px]:text-sm">
               Already have an account?{' '}
               <Link
                 to="/login"
@@ -199,7 +193,7 @@ export default function Register() {
             </p>
           </motion.div>
 
-          {/* Error */}
+          {}
           <AnimatePresence mode="wait">
             {error && (
               <motion.div
@@ -216,12 +210,12 @@ export default function Register() {
             )}
           </AnimatePresence>
 
-          {/* Form */}
+          {}
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Username */}
+            {}
             <motion.div variants={itemVariants} className="space-y-1.5">
-              <label className="block text-sm font-bold text-gray-700">Username</label>
+              <label className="block text-xs min-[320px]:text-sm font-bold text-gray-700">Username</label>
               <input
                 type="text"
                 name="username"
@@ -229,13 +223,13 @@ export default function Register() {
                 onChange={handleChange}
                 placeholder="chef_john"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none transition-all text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
+                className="w-full px-3 min-[320px]:px-4 py-2.5 min-[320px]:py-3 rounded-xl border border-gray-200 outline-none transition-all text-xs min-[320px]:text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
               />
             </motion.div>
 
-            {/* Email */}
+            {}
             <motion.div variants={itemVariants} className="space-y-1.5">
-              <label className="block text-sm font-bold text-gray-700">Email Address</label>
+              <label className="block text-xs min-[320px]:text-sm font-bold text-gray-700">Email Address</label>
               <input
                 type="email"
                 name="email"
@@ -243,13 +237,13 @@ export default function Register() {
                 onChange={handleChange}
                 placeholder="chef@matbakhy.com"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none transition-all text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
+                className="w-full px-3 min-[320px]:px-4 py-2.5 min-[320px]:py-3 rounded-xl border border-gray-200 outline-none transition-all text-xs min-[320px]:text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
               />
             </motion.div>
 
-            {/* Password */}
+            {}
             <motion.div variants={itemVariants} className="space-y-1.5">
-              <label className="block text-sm font-bold text-gray-700">Password</label>
+              <label className="block text-xs min-[320px]:text-sm font-bold text-gray-700">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -259,7 +253,7 @@ export default function Register() {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 outline-none transition-all text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
+                  className="w-full px-3 min-[320px]:px-4 py-2.5 min-[320px]:py-3 pr-11 rounded-xl border border-gray-200 outline-none transition-all text-xs min-[320px]:text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
                 />
                 <button
                   type="button"
@@ -272,7 +266,7 @@ export default function Register() {
               <p className="text-xs text-gray-400 mt-1">Minimum 6 characters</p>
             </motion.div>
 
-            {/* Submit */}
+            {}
             <motion.button
               variants={buttonVariants}
               animate={loading ? 'loading' : 'idle'}
@@ -280,7 +274,7 @@ export default function Register() {
               whileTap={loading ? undefined : 'tap'}
               type="submit"
               disabled={loading}
-              className="w-full cursor-pointer mt-2 text-white font-black py-3.5 rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="w-full cursor-pointer mt-2 text-white font-black py-3 min-[320px]:py-3.5 rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2 text-xs min-[320px]:text-sm sm:text-base"
               style={{
                 background: '#2A9D72',
                 boxShadow: '0 10px 20px -6px rgba(42, 157, 114, 0.3)'
@@ -309,13 +303,13 @@ export default function Register() {
             </motion.button>
           </form>
 
-          {/* Terms */}
+          {}
           <motion.p variants={itemVariants} className="mt-4 text-center text-xs text-gray-400">
             By creating an account, you agree to our{' '}
             <span className="font-semibold text-gray-500 cursor-pointer hover:text-gray-700">Terms of Service</span>
           </motion.p>
 
-          {/* Footer */}
+          {}
           <motion.div
             variants={itemVariants}
             className="mt-8 pt-6 border-t border-gray-100 text-center lg:hidden"

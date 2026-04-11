@@ -1,7 +1,15 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { motion } from 'framer-motion';
+
+function GuestRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-gray-400">Loading...</div>;
+  if (user) return <Navigate to="/" replace />;
+  return children;
+}
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -16,6 +24,13 @@ import Favorites from './pages/Favorites';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Notifications from './pages/Notifications';
+import Footer from './components/Footer';
+import { NotificationProvider } from './context/NotificationContext';
+
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminRecipes from './pages/admin/AdminRecipes';
 
 function NotFound() {
   return (
@@ -48,32 +63,62 @@ function NotFound() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Navbar />
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/profile/:id" element={<Profile />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/notifications" element={<Notifications />} />
+        <NotificationProvider>
+        <ScrollToTop />
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              {}
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+              <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+              {}
+              <Route path="/recipe/:idAndSlug" element={<RecipeDetail />} />
 
-          {/* Protected routes */}
-          <Route path="/create" element={<ProtectedRoute><CreateRecipe /></ProtectedRoute>} />
-          <Route path="/edit/:id" element={<ProtectedRoute><CreateRecipe /></ProtectedRoute>} />
-          <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-          <Route path="/messages/:userId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="/profile/:identifier" element={<Profile />} />
+              <Route path="/favorites" element={<Favorites />} />
 
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+              {}
+              <Route path="/create" element={<ProtectedRoute><CreateRecipe /></ProtectedRoute>} />
+              {}
+              {}
+              <Route path="/edit/:idAndSlug" element={<ProtectedRoute><CreateRecipe /></ProtectedRoute>} />
+
+              <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="/messages/:userId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+
+              {}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="recipes" element={<AdminRecipes />} />
+              </Route>
+
+              {}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+        </NotificationProvider>
       </BrowserRouter>
     </AuthProvider>
   );

@@ -1,13 +1,20 @@
 const db = require('../config/db');
 
 const notificationController = {
-  // GET /api/notifications
+  
   getNotifications: async (req, res) => {
     try {
       const userId = req.user.userId;
 
       const [notifications] = await db.query(
-        'SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC',
+        `SELECT n.*,
+          u.username as related_username,
+          r.title as related_recipe_title
+         FROM notifications n
+         LEFT JOIN users u ON n.type = 'follow' AND n.related_id = u.id
+         LEFT JOIN recipes r ON n.type IN ('like', 'comment', 'new_recipe') AND n.related_id = r.id
+         WHERE n.user_id = ? 
+         ORDER BY n.created_at DESC`,
         [userId]
       );
 
@@ -18,7 +25,6 @@ const notificationController = {
     }
   },
 
-  // PUT /api/notifications/:id/read
   markAsRead: async (req, res) => {
     try {
       const { id } = req.params;
@@ -36,7 +42,6 @@ const notificationController = {
     }
   },
 
-  // PUT /api/notifications/read-all
   markAllAsRead: async (req, res) => {
     try {
       const userId = req.user.userId;

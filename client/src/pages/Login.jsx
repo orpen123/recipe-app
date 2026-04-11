@@ -5,8 +5,6 @@ import { login } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import loginBg from '../assets/loginBg.jpg';
 
-// ─── Animation Variants ──────────────────────────────────────────────────────
-
 const panelVariants = {
   hidden: { opacity: 0, x: -60 },
   visible: {
@@ -79,8 +77,6 @@ const buttonVariants = {
   },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function Login() {
   const { loginUser } = useAuth();
   const navigate = useNavigate();
@@ -109,7 +105,6 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
 
-      {/* ── Left: Hero Panel ── */}
       <motion.div
         variants={panelVariants}
         initial="hidden"
@@ -151,15 +146,14 @@ export default function Login() {
         </div>
       </motion.div>
 
-      {/* ── Right: Form Panel ── */}
-      <div className="flex-1 flex flex-col justify-center px-5 py-20 sm:px-12 lg:pb-16 bg-white lg:bg-gray-50">
+      <div className="flex-1 flex flex-col justify-center px-4 min-[320px]:px-5 py-12 min-[320px]:py-20 sm:px-12 lg:pb-16 bg-white lg:bg-gray-50">
         <motion.div
           variants={formContainerVariants}
           initial="hidden"
           animate="visible"
           className="w-full max-w-md mx-auto"
         >
-          {/* Logo */}
+          
           <motion.div variants={itemVariants} className="mb-8 lg:mb-12">
             <Link
               to="/"
@@ -177,12 +171,12 @@ export default function Login() {
             </Link>
           </motion.div>
 
-          {/* Heading */}
-          <motion.div variants={itemVariants} className="mb-7">
-            <h1 className="text-2xl sm:text-4xl font-black text-gray-900 mb-1.5">
+          {}
+          <motion.div variants={itemVariants} className="mb-5 min-[320px]:mb-7">
+            <h1 className="text-xl min-[320px]:text-2xl sm:text-4xl font-black text-gray-900 mb-1.5">
               Sign In
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 text-xs min-[320px]:text-sm">
               Don't have an account?{' '}
               <Link
                 to="/register"
@@ -194,7 +188,7 @@ export default function Login() {
             </p>
           </motion.div>
 
-          {/* Error */}
+          {}
           <AnimatePresence mode="wait">
             {error && (
               <motion.div
@@ -211,12 +205,12 @@ export default function Login() {
             )}
           </AnimatePresence>
 
-          {/* Form */}
+          {}
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Email */}
+            {}
             <motion.div variants={itemVariants} className="space-y-1.5">
-              <label className="block text-sm font-bold text-gray-700">
+              <label className="block text-xs min-[320px]:text-sm font-bold text-gray-700">
                 Email Address
               </label>
               <input
@@ -226,19 +220,19 @@ export default function Login() {
                 onChange={handleChange}
                 placeholder="chef@matbakhy.com"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none transition-all text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
+                className="w-full px-3 min-[320px]:px-4 py-2.5 min-[320px]:py-3 rounded-xl border border-gray-200 outline-none transition-all text-xs min-[320px]:text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
               />
             </motion.div>
 
-            {/* Password */}
+            {}
             <motion.div variants={itemVariants} className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label className="block text-sm font-bold text-gray-700">
+                <label className="block text-xs min-[320px]:text-sm font-bold text-gray-700">
                   Password
                 </label>
                 <button
                   type="button"
-                  className="text-xs font-semibold text-gray-400 hover:text-[#2A9D72] transition-colors"
+                  className="text-[10px] min-[320px]:text-xs font-semibold text-gray-400 hover:text-[#2A9D72] transition-colors"
                 >
                   Forgot?
                 </button>
@@ -251,7 +245,7 @@ export default function Login() {
                   onChange={handleChange}
                   placeholder="••••••••"
                   required
-                  className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 outline-none transition-all text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
+                  className="w-full px-3 min-[320px]:px-4 py-2.5 min-[320px]:py-3 pr-11 rounded-xl border border-gray-200 outline-none transition-all text-xs min-[320px]:text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#2A9D72] focus:ring-4 focus:ring-[#2A9D72]/10"
                 />
                 <button
                   type="button"
@@ -263,7 +257,7 @@ export default function Login() {
               </div>
             </motion.div>
 
-            {/* Submit */}
+            {}
             <motion.button
               variants={buttonVariants}
               animate={loading ? 'loading' : 'idle'}
@@ -271,7 +265,7 @@ export default function Login() {
               whileTap={loading ? undefined : 'tap'}
               type="submit"
               disabled={loading}
-              className="w-full cursor-pointer mt-2 text-white font-black py-3.5 rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="w-full cursor-pointer mt-2 text-white font-black py-3 min-[320px]:py-3.5 rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2 text-xs min-[320px]:text-sm sm:text-base"
               style={{
                 background: '#2A9D72',
                 boxShadow: '0 10px 20px -6px rgba(42, 157, 114, 0.3)'
@@ -300,7 +294,7 @@ export default function Login() {
             </motion.button>
           </form>
 
-          {/* Footer */}
+          {}
           <motion.div
             variants={itemVariants}
             className="mt-8 pt-6 border-t border-gray-100 text-center lg:hidden"
