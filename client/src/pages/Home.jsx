@@ -76,7 +76,7 @@ export default function Home() {
 
   useEffect(() => {
     getAllRecipes()
-      .then((res) => setRecipes(res.data))
+      .then((res) => setRecipes(Array.isArray(res.data) ? res.data : []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -194,7 +194,7 @@ export default function Home() {
       style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}
     >
       {}
-      <div className="relative mx-2 rounded-2xl overflow-hidden h-[200px] sm:h-75 md:h-95 lg:h-110">
+      <div className="relative mx-3 sm:mx-6 lg:mx-12 xl:mx-auto max-w-7xl rounded-2xl min-[320px]:rounded-3xl overflow-hidden h-[240px] min-[400px]:h-[300px] sm:h-[380px] md:h-[460px] lg:h-[540px]">
         <img
           src={img}
           alt="Hero"
@@ -218,13 +218,13 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3 py-1 mb-3 sm:mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
-              <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
+              <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-white/80">
                 Community Recipes
               </p>
             </div>
 
             <h1
-              className="text-[22px] min-[320px]:text-[26px] sm:text-[52px] lg:text-[66px]  font-black text-white leading-[1.05] mb-2 sm:mb-4"
+              className="text-[28px] min-[380px]:text-[34px] sm:text-[52px] lg:text-[66px] font-black text-white leading-[1.1] mb-2 sm:mb-4"
               style={{ letterSpacing: "-0.02em" }}
             >
               Easy Home
@@ -232,20 +232,20 @@ export default function Home() {
               <span className="text-emerald-300">Cooking.</span>
             </h1>
 
-            <p className="text-[10px] sm:text-[15px] text-white/50 mb-4 sm:mb-7 font-medium max-w-[200px] sm:max-w-sm leading-relaxed">
+            <p className="text-[12px] sm:text-[15px] text-white/60 mb-5 sm:mb-7 font-medium max-w-[240px] sm:max-w-sm leading-relaxed">
               Discover amazing recipes from our community of home cooks.
             </p>
 
-            <div className="flex gap-2 flex-wrap min-[320px]:gap-2">
+            <div className="flex gap-2.5 flex-wrap">
               <Link
                 to="/register"
-                className="inline-flex items-center bg-white text-stone-900 text-[9px] min-[320px]:text-[10px] sm:text-[13px] font-bold uppercase tracking-[0.07em] px-3 min-[320px]:px-4 sm:px-7 py-2 sm:py-3 rounded-full hover:bg-emerald-50 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-black/10"
+                className="inline-flex items-center bg-white text-stone-900 text-[11px] sm:text-[13px] font-bold uppercase tracking-[0.07em] px-4 sm:px-7 py-2.5 sm:py-3 rounded-full hover:bg-emerald-50 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-black/10"
               >
                 Join us
               </Link>
               <button
                 onClick={scrollToRecipes}
-                className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white border border-white/20 text-[9px] min-[320px]:text-[10px] sm:text-[13px] font-bold uppercase tracking-[0.07em] px-3 min-[320px]:px-4 sm:px-7 py-2 sm:py-3 rounded-full hover:bg-white/18 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white border border-white/20 text-[11px] sm:text-[13px] font-bold uppercase tracking-[0.07em] px-4 sm:px-7 py-2.5 sm:py-3 rounded-full hover:bg-white/18 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
               >
                 Browse ↓
               </button>
@@ -338,11 +338,11 @@ export default function Home() {
         ref={recipesRef}
       >
         <div className="text-center mb-6 sm:mb-8">
-          <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-[#1a7a52] mb-1.5">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1a7a52] mb-1.5 sm:mb-2">
             Explore
           </p>
           <h2
-            className="text-[24px]  sm:text-[36px] font-black text-stone-900"
+            className="text-[26px] sm:text-[36px] font-black text-stone-900"
             style={{ letterSpacing: "-0.025em" }}
           >
             What to{" "}
@@ -379,7 +379,7 @@ export default function Home() {
                 }}
                 whileTap={{ scale: 0.95 }}
                 className={[
-                  "relative inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-[13px] font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap",
+                  "relative inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap",
                   activeCategory === cat.value
                     ? "bg-stone-900 text-white shadow-lg shadow-stone-900/15"
                     : "bg-white text-stone-500 border border-stone-200 hover:border-[#1a7a52]/40 hover:text-[#1a7a52] hover:bg-emerald-50/60 shadow-sm",
@@ -405,22 +405,22 @@ export default function Home() {
 
       {}
       <div className="px-4 sm:px-6 lg:px-12 pt-8 sm:pt-10 pb-20 sm:pb-28 max-w-7xl mx-auto">
-        <div className="flex flex-wrap min-[350px]:flex-nowrap items-center justify-between gap-3 mb-5 sm:mb-6">
+        <div className="flex flex-row items-center justify-between gap-2 mb-5 sm:mb-6">
           <div className="flex items-center gap-2">
-            <h2 className="text-[13px] min-[320px]:text-[15px] sm:text-[17px] font-bold text-stone-900 whitespace-nowrap">
+            <h2 className="text-[14px] min-[380px]:text-[16px] sm:text-[17px] font-bold text-stone-900 whitespace-nowrap">
               {searchQuery ? "Search Results" : "Latest Recipes"}
             </h2>
             {!loading && (
-              <span className="text-[9px] min-[320px]:text-[11px] font-semibold text-stone-400 bg-stone-100 px-2 min-[320px]:px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] min-[380px]:text-[11px] font-semibold text-stone-400 bg-stone-100 px-2 min-[380px]:px-2.5 py-0.5 rounded-full">
                 {filtered.length}
               </span>
             )}
           </div>
           <Link
             to="/create"
-            className="inline-flex items-center justify-center gap-1 min-[320px]:gap-1.5 text-[10px] min-[320px]:text-[12px] sm:text-[13px] font-bold text-white bg-[#1a7a52] hover:bg-[#15694a] transition-colors duration-200 px-3 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full shadow-md shadow-emerald-900/15 whitespace-nowrap shrink-0"
+            className="inline-flex items-center justify-center gap-1 sm:gap-1.5 text-[11px] min-[380px]:text-[12px] sm:text-[13px] font-bold text-white bg-[#1a7a52] hover:bg-[#15694a] transition-colors duration-200 px-3 min-[380px]:px-4 py-1.5 sm:py-2 rounded-full shadow-md shadow-emerald-900/15 whitespace-nowrap shrink-0"
           >
-            <span className="text-base min-[320px]:text-lg leading-none -mt-0.5">+</span> Add Recipe
+            <span className="text-sm min-[380px]:text-base leading-none -mt-0.5">+</span> Add Recipe
           </Link>
         </div>
 

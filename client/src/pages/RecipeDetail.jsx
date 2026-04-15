@@ -236,7 +236,9 @@ function RecipeLikesModal({ users, onClose, loading }) {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between px-4 min-[320px]:px-5 py-3 min-[320px]:py-4 border-b border-gray-100">
-            <h3 className="font-black text-gray-900 text-sm min-[320px]:text-base">Likes</h3>
+            <h3 className="font-black text-gray-900 text-sm min-[320px]:text-base">
+              Likes
+            </h3>
             <button
               onClick={onClose}
               className="w-7 h-7 min-[320px]:w-8 min-[320px]:h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
@@ -297,30 +299,75 @@ function RecipeLikesModal({ users, onClose, loading }) {
 function AllReviewsModal({ reviews, onClose }) {
   return (
     <AnimatePresence>
-      <motion.div variants={modalBackdrop} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-50 flex items-center justify-center p-3 min-[320px]:p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
-        <motion.div variants={modalPanel} initial="hidden" animate="visible" exit="exit" className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+      <motion.div
+        variants={modalBackdrop}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 min-[320px]:p-4 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div
+          variants={modalPanel}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex items-center justify-between px-4 min-[320px]:px-5 py-3 min-[320px]:py-4 border-b border-gray-100 shrink-0">
-            <h3 className="font-black text-gray-900 text-sm min-[320px]:text-base">All Reviews ({reviews.length})</h3>
-            <button onClick={onClose} className="w-7 h-7 min-[320px]:w-8 min-[320px]:h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">✕</button>
+            <h3 className="font-black text-gray-900 text-sm min-[320px]:text-base">
+              All Reviews ({reviews.length})
+            </h3>
+            <button
+              onClick={onClose}
+              className="w-7 h-7 min-[320px]:w-8 min-[320px]:h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+            >
+              ✕
+            </button>
           </div>
           <div className="overflow-y-auto custom-scroll p-4 min-[320px]:p-5 space-y-3 min-[320px]:space-y-4">
             {reviews.map((r, i) => (
-              <div key={r.id} className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-emerald-50/50 rounded-xl min-[320px]:rounded-2xl border border-emerald-100">
+              <div
+                key={r.id}
+                className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-emerald-50/50 rounded-xl min-[320px]:rounded-2xl border border-emerald-100"
+              >
                 <div className="w-7 min-[320px]:w-9 h-7 min-[320px]:h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xs min-[320px]:text-sm shrink-0 overflow-hidden">
-                  {r.avatar ? <img src={r.avatar} alt={r.username} className="w-full h-full object-cover" /> : r.username?.[0]?.toUpperCase()}
+                  {r.avatar ? (
+                    <img
+                      src={r.avatar}
+                      alt={r.username}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    r.username?.[0]?.toUpperCase()
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1 min-[320px]:gap-2 mb-1 flex-wrap">
-                    <p className="text-[10px] min-[320px]:text-xs font-black text-gray-800">{r.username}</p>
+                    <p className="text-[10px] min-[320px]:text-xs font-black text-gray-800">
+                      {r.username}
+                    </p>
                     <div className="flex items-center gap-0.5">
-                      {[1,2,3,4,5].map(s => (
-                        <svg key={s} className="w-2.5 min-[320px]:w-3 h-2.5 min-[320px]:h-3" viewBox="0 0 24 24" fill={s <= r.rating ? "#059669" : "none"} stroke="#059669" strokeWidth="2">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <svg
+                          key={s}
+                          className="w-2.5 min-[320px]:w-3 h-2.5 min-[320px]:h-3"
+                          viewBox="0 0 24 24"
+                          fill={s <= r.rating ? "#059669" : "none"}
+                          stroke="#059669"
+                          strokeWidth="2"
+                        >
                           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                         </svg>
                       ))}
                     </div>
                   </div>
-                  {r.content && <p className="text-xs min-[320px]:text-sm text-gray-600 leading-relaxed">{r.content}</p>}
+                  {r.content && (
+                    <p className="text-xs min-[320px]:text-sm text-gray-600 leading-relaxed">
+                      {r.content}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
@@ -334,24 +381,65 @@ function AllReviewsModal({ reviews, onClose }) {
 function AllCommentsModal({ comments, onClose, user, handleDeleteComment }) {
   return (
     <AnimatePresence>
-      <motion.div variants={modalBackdrop} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-50 flex items-center justify-center p-3 min-[320px]:p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
-        <motion.div variants={modalPanel} initial="hidden" animate="visible" exit="exit" className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+      <motion.div
+        variants={modalBackdrop}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 min-[320px]:p-4 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div
+          variants={modalPanel}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex items-center justify-between px-4 min-[320px]:px-5 py-3 min-[320px]:py-4 border-b border-gray-100 shrink-0">
-            <h3 className="font-black text-gray-900 text-sm min-[320px]:text-base">All Comments ({comments.length})</h3>
-            <button onClick={onClose} className="w-7 h-7 min-[320px]:w-8 min-[320px]:h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">✕</button>
+            <h3 className="font-black text-gray-900 text-sm min-[320px]:text-base">
+              All Comments ({comments.length})
+            </h3>
+            <button
+              onClick={onClose}
+              className="w-7 h-7 min-[320px]:w-8 min-[320px]:h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+            >
+              ✕
+            </button>
           </div>
           <div className="overflow-y-auto custom-scroll p-4 min-[320px]:p-5 space-y-3 min-[320px]:space-y-4">
             {comments.map((c, i) => (
-              <div key={c.id} className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-gray-50 rounded-xl min-[320px]:rounded-2xl border border-gray-100 group">
+              <div
+                key={c.id}
+                className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-gray-50 rounded-xl min-[320px]:rounded-2xl border border-gray-100 group"
+              >
                 <div className="w-7 min-[320px]:w-9 h-7 min-[320px]:h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-black text-xs min-[320px]:text-sm shrink-0 overflow-hidden">
-                  {c.avatar ? <img src={c.avatar} alt={c.username} className="w-full h-full object-cover" /> : c.username?.[0]?.toUpperCase() || "?"}
+                  {c.avatar ? (
+                    <img
+                      src={c.avatar}
+                      alt={c.username}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    c.username?.[0]?.toUpperCase() || "?"
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] min-[320px]:text-xs font-black text-gray-800 mb-0.5">{c.username}</p>
-                  <p className="text-xs min-[320px]:text-sm text-gray-600 leading-relaxed break-words">{c.content}</p>
+                  <p className="text-[10px] min-[320px]:text-xs font-black text-gray-800 mb-0.5">
+                    {c.username}
+                  </p>
+                  <p className="text-xs min-[320px]:text-sm text-gray-600 leading-relaxed break-words">
+                    {c.content}
+                  </p>
                 </div>
                 {user?.id === c.user_id && (
-                  <button onClick={() => handleDeleteComment(c.id)} className="text-xs text-red-400 hover:text-red-600 transition-all shrink-0 w-5 min-[320px]:w-6 h-5 min-[320px]:h-6 flex items-center justify-center rounded-full hover:bg-red-50">✕</button>
+                  <button
+                    onClick={() => handleDeleteComment(c.id)}
+                    className="text-xs text-red-400 hover:text-red-600 transition-all shrink-0 w-5 min-[320px]:w-6 h-5 min-[320px]:h-6 flex items-center justify-center rounded-full hover:bg-red-50"
+                  >
+                    ✕
+                  </button>
                 )}
               </div>
             ))}
@@ -451,8 +539,8 @@ function Skeleton() {
   return (
     <div className="min-h-screen bg-[#fafaf8] pt-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          <div className="rounded-3xl bg-gray-100 aspect-[4/3] lg:aspect-auto lg:min-h-[500px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div className="rounded-3xl bg-gray-100 aspect-[4/3] md:aspect-auto md:min-h-[500px]" />
           <div className="space-y-4">
             <div className="h-4 bg-gray-100 rounded w-24" />
             <div className="h-9 bg-gray-100 rounded w-3/4" />
@@ -622,13 +710,22 @@ export default function RecipeDetail() {
     if (!user || !reviewRating) return;
     setReviewSubmitting(true);
     try {
-      const res = await submitReview(id, { rating: reviewRating, content: reviewContent });
+      const res = await submitReview(id, {
+        rating: reviewRating,
+        content: reviewContent,
+      });
       setMyReview(res.data);
       const updated = await getRecipeReviews(id);
       setReviews(updated.data.reviews);
-      setReviewStats({ avg_rating: updated.data.avg_rating, total_reviews: updated.data.total_reviews });
-    } catch (err) { console.error(err); }
-    finally { setReviewSubmitting(false); }
+      setReviewStats({
+        avg_rating: updated.data.avg_rating,
+        total_reviews: updated.data.total_reviews,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setReviewSubmitting(false);
+    }
   };
 
   const handleDeleteReview = async () => {
@@ -639,8 +736,13 @@ export default function RecipeDetail() {
       setReviewContent("");
       const updated = await getRecipeReviews(id);
       setReviews(updated.data.reviews);
-      setReviewStats({ avg_rating: updated.data.avg_rating, total_reviews: updated.data.total_reviews });
-    } catch (err) { console.error(err); }
+      setReviewStats({
+        avg_rating: updated.data.avg_rating,
+        total_reviews: updated.data.total_reviews,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleDelete = async () => {
@@ -704,498 +806,618 @@ export default function RecipeDetail() {
 
       {}
       <div className="max-w-7xl mx-auto px-2 min-[320px]:px-3 sm:px-6 lg:px-8 py-3 sm:py-4 pb-16 sm:pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 min-[400px]:gap-4 sm:gap-8 lg:gap-12 items-start">
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 min-[400px]:gap-4 sm:gap-8 md:gap-12 items-start">
           {}
-          <div className="contents lg:flex lg:flex-col lg:gap-6">
+          <div className="contents md:flex md:flex-col md:gap-6">
             {}
-            <div className="order-1 lg:order-none">
-            <motion.div
-              variants={scaleIn}
-              initial="hidden"
-              animate="visible"
-              className="relative rounded-2xl min-[320px]:rounded-3xl overflow-hidden shadow-xl bg-gray-100 aspect-[4/3] max-h-[220px] min-[320px]:max-h-[260px] sm:max-h-[340px] lg:max-h-[520px]"
-            >
-              {recipe.image ? (
-                <img
-                  src={recipe.image}
-                  alt={recipe.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
-                  <svg
-                    className="w-16 min-[320px]:w-24 h-16 min-[320px]:h-24 text-emerald-200"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
-                    />
-                  </svg>
+            <div className="order-1 md:order-0">
+              <motion.div
+                variants={scaleIn}
+                initial="hidden"
+                animate="visible"
+                className="relative rounded-2xl min-[320px]:rounded-3xl overflow-hidden shadow-xl bg-gray-100 aspect-4/3 max-h-55 min-[320px]:max-h-65 sm:max-h-85 md:max-h-130"
+              >
+                {recipe.image ? (
+                  <img
+                    src={recipe.image}
+                    alt={recipe.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
+                    <svg
+                      className="w-16 min-[320px]:w-24 h-16 min-[320px]:h-24 text-emerald-200"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
+                      />
+                    </svg>
+                  </div>
+                )}
+                <div className="absolute top-3 left-3 min-[320px]:top-4 min-[320px]:left-4">
+                  <span className="inline-block text-[9px] min-[320px]:text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-white/95 backdrop-blur-sm px-2 min-[320px]:px-3 py-1 min-[320px]:py-1.5 rounded-full border border-emerald-100 shadow-sm">
+                    {recipe.category || "Recipe"}
+                  </span>
                 </div>
-              )}
-              <div className="absolute top-3 left-3 min-[320px]:top-4 min-[320px]:left-4">
-                <span className="inline-block text-[9px] min-[320px]:text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-white/95 backdrop-blur-sm px-2 min-[320px]:px-3 py-1 min-[320px]:py-1.5 rounded-full border border-emerald-100 shadow-sm">
-                  {recipe.category || "Recipe"}
-                </span>
-              </div>
-            </motion.div>
+              </motion.div>
             </div>
 
             {}
-            <div className="order-3 lg:order-none">
-            {recipe.ingredients?.length > 0 && (
-              <motion.section
+            <div className="order-3 md:order-0">
+              {recipe.ingredients?.length > 0 && (
+                <motion.section
+                  variants={fadeIn}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-60px" }}
+                  className="border-t-2 border-emerald-100 pt-5 sm:pt-6"
+                >
+                  <div className="flex items-center gap-2 mb-3 sm:mb-5">
+                    <h2 className="text-sm min-[400px]:text-base sm:text-xl font-black text-gray-900">
+                      Ingredients
+                    </h2>
+                    <span className="text-[9px] min-[400px]:text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 min-[400px]:px-2 py-0.5 rounded-full">
+                      {recipe.ingredients.length} items
+                    </span>
+                    <span className="text-[9px] text-gray-400 font-medium ml-auto hidden min-[360px]:inline">
+                      tap to check off
+                    </span>
+                  </div>
+                  <ul className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-2">
+                    {recipe.ingredients.map((ing, i) => (
+                      <IngredientItem key={i} ing={ing} index={i} />
+                    ))}
+                  </ul>
+                </motion.section>
+              )}
+            </div>
+
+            {}
+            <div className="order-4 md:order-none">
+              <motion.div
                 variants={fadeIn}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
+                viewport={{ once: true }}
                 className="border-t-2 border-emerald-100 pt-5 sm:pt-6"
               >
-                <div className="flex items-center gap-2 mb-3 sm:mb-5">
-                  <h2 className="text-sm min-[400px]:text-base sm:text-xl font-black text-gray-900">
-                    Ingredients
-                  </h2>
-                  <span className="text-[9px] min-[400px]:text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 min-[400px]:px-2 py-0.5 rounded-full">
-                    {recipe.ingredients.length} items
-                  </span>
-                  <span className="text-[9px] text-gray-400 font-medium ml-auto hidden min-[360px]:inline">
-                    tap to check off
-                  </span>
-                </div>
-                <ul className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-2">
-                  {recipe.ingredients.map((ing, i) => (
-                    <IngredientItem key={i} ing={ing} index={i} />
-                  ))}
-                </ul>
-              </motion.section>
-            )}
-            </div>
-
-            {}
-            <div className="order-4 lg:order-none">
-            <motion.div
-              variants={fadeIn}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="border-t-2 border-emerald-100 pt-5 sm:pt-6"
-            >
-              <div className="flex items-center gap-2 min-[320px]:gap-3 mb-4 sm:mb-5">
-                <div className="flex items-center gap-1.5 min-[320px]:gap-2 bg-emerald-50 border border-emerald-200 px-2 min-[320px]:px-3 py-1 min-[320px]:py-1.5 rounded-xl">
-                  <span className="text-sm min-[320px]:text-base">⭐</span>
-                  <h2 className="text-sm min-[320px]:text-base font-black text-emerald-800">Reviews</h2>
-                </div>
-                <span className="text-[10px] min-[320px]:text-xs font-bold bg-emerald-100 text-emerald-700 px-2 min-[320px]:px-2.5 py-0.5 min-[320px]:py-1 rounded-full">
-                  {reviewStats.total_reviews}
-                </span>
-              </div>
-
-              {user && !isOwner && (
-                <form onSubmit={handleSubmitReview} className="mb-5 sm:mb-6 p-3 min-[320px]:p-4 bg-emerald-50 rounded-xl min-[320px]:rounded-2xl border border-emerald-200">
-                  <p className="text-xs min-[320px]:text-sm font-black text-gray-800 mb-2 min-[320px]:mb-3">
-                    {myReview ? "Update your review" : "Write a review"}
-                  </p>
-                  <div className="flex items-center gap-0.5 min-[320px]:gap-1 mb-2 min-[320px]:mb-3">
-                    {[1,2,3,4,5].map(s => (
-                      <button key={s} type="button" onClick={() => setReviewRating(s)}>
-                        <svg className="w-5 min-[320px]:w-6 h-5 min-[320px]:h-6 transition-transform hover:scale-110" viewBox="0 0 24 24"
-                          fill={s <= reviewRating ? "#059669" : "none"}
-                          stroke="#059669" strokeWidth="2">
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                        </svg>
-                      </button>
-                    ))}
-                    {reviewRating > 0 && (
-                      <span className="text-[10px] min-[320px]:text-xs text-emerald-600 ml-1 min-[320px]:ml-2 font-semibold">
-                        {["","Terrible","Poor","Average","Good","Excellent"][reviewRating]}
-                      </span>
-                    )}
+                <div className="flex items-center gap-2 min-[320px]:gap-3 mb-4 sm:mb-5">
+                  <div className="flex items-center gap-1.5 min-[320px]:gap-2 bg-emerald-50 border border-emerald-200 px-2 min-[320px]:px-3 py-1 min-[320px]:py-1.5 rounded-xl">
+                    <svg className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" viewBox="0 0 24 24" fill="#FBA11F" stroke="#FBA11F" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                    <h2 className="text-sm min-[320px]:text-base font-black text-emerald-800">
+                      Reviews
+                    </h2>
                   </div>
-                  <textarea
-                    value={reviewContent}
-                    onChange={e => setReviewContent(e.target.value)}
-                    placeholder="Share your experience (optional)..."
-                    rows={3}
-                    className="w-full px-3 min-[320px]:px-4 py-2 min-[320px]:py-2.5 rounded-lg min-[320px]:rounded-xl border border-emerald-200 bg-white text-xs min-[320px]:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none placeholder:text-gray-400 mb-2 min-[320px]:mb-3"
-                  />
-                  <div className="flex gap-2">
-                    <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                      type="submit" disabled={reviewSubmitting || !reviewRating}
-                      className="px-3 min-[320px]:px-5 py-1.5 min-[320px]:py-2 bg-emerald-600 text-white text-xs min-[320px]:text-sm font-bold rounded-lg min-[320px]:rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50"
-                    >
-                      {reviewSubmitting ? "Saving..." : myReview ? "Update" : "Submit"}
-                    </motion.button>
-                    {myReview && (
-                      <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                        type="button" onClick={handleDeleteReview}
-                        className="px-3 min-[320px]:px-5 py-1.5 min-[320px]:py-2 border border-red-200 text-red-500 text-xs min-[320px]:text-sm font-bold rounded-lg min-[320px]:rounded-xl hover:bg-red-50 transition-colors"
+                  <span className="text-[10px] min-[320px]:text-xs font-bold bg-emerald-100 text-emerald-700 px-2 min-[320px]:px-2.5 py-0.5 min-[320px]:py-1 rounded-full">
+                    {reviewStats.total_reviews}
+                  </span>
+                </div>
+
+                {user && !isOwner && (
+                  <form
+                    onSubmit={handleSubmitReview}
+                    className="mb-5 sm:mb-6 p-3 min-[400px]:p-4 bg-emerald-50 rounded-xl min-[400px]:rounded-2xl border border-emerald-200"
+                  >
+                    <p className="text-[12px] min-[400px]:text-sm font-black text-gray-800 mb-2 min-[400px]:mb-3">
+                      {myReview ? "Update your review" : "Write a review"}
+                    </p>
+                    <div className="flex items-center gap-0.5 min-[400px]:gap-1 mb-2 min-[400px]:mb-3">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setReviewRating(s)}
+                        >
+                          <svg
+                            className="w-4 min-[400px]:w-6 h-4 min-[400px]:h-6 transition-transform hover:scale-110"
+                            viewBox="0 0 24 24"
+                            fill={s <= reviewRating ? "#FBA11F" : "none"}
+                            stroke="#FBA11F"
+                            strokeWidth="2"
+                          >
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                          </svg>
+                        </button>
+                      ))}
+                      {reviewRating > 0 && (
+                        <span className="text-[10px] min-[400px]:text-xs text-[#FBA11F] ml-1 min-[400px]:ml-2 font-semibold">
+                          {
+                            [
+                              "",
+                              "Terrible",
+                              "Poor",
+                              "Average",
+                              "Good",
+                              "Excellent",
+                            ][reviewRating]
+                          }
+                        </span>
+                      )}
+                    </div>
+                    <textarea
+                      value={reviewContent}
+                      onChange={(e) => setReviewContent(e.target.value)}
+                      placeholder="Share your experience (optional)..."
+                      rows={3}
+                      className="w-full px-3 min-[400px]:px-4 py-2 min-[400px]:py-2.5 rounded-lg min-[400px]:rounded-xl border border-emerald-200 bg-white text-[10px] min-[400px]:text-[12px] sm:text-[13px] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none placeholder:text-gray-400 mb-2 min-[400px]:mb-3"
+                    />
+                    <div className="flex gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        type="submit"
+                        disabled={reviewSubmitting || !reviewRating}
+                        className="px-3 min-[400px]:px-5 py-1.5 min-[400px]:py-2 bg-emerald-600 text-white text-[11px] min-[400px]:text-sm font-bold rounded-lg min-[400px]:rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50"
                       >
-                        Delete
+                        {reviewSubmitting
+                          ? "Saving..."
+                          : myReview
+                            ? "Update"
+                            : "Submit"}
                       </motion.button>
-                    )}
-                  </div>
-                </form>
-              )}
-              {!user && (
-                <div className="mb-5 sm:mb-6 p-3 min-[320px]:p-4 bg-emerald-50 rounded-xl min-[320px]:rounded-2xl border border-emerald-100 text-center">
-                  <p className="text-xs min-[320px]:text-sm text-gray-500">
-                    <Link to="/login" className="text-emerald-600 font-bold hover:underline">Sign in</Link> to leave a review
-                  </p>
-                </div>
-              )}
-              <div className="flex flex-col gap-2 min-[320px]:gap-3">
-                {reviews.length === 0 ? (
-                  <div className="text-center py-6 min-[320px]:py-8">
-                    <p className="text-xl min-[320px]:text-2xl mb-2">⭐</p>
-                    <p className="text-xs min-[320px]:text-sm text-gray-400 font-medium">No reviews yet. Be the first!</p>
-                  </div>
-                ) : (
-                  <AnimatePresence>
-                    {reviews.slice(0, 3).map((r, i) => (
-                      <motion.div key={r.id} custom={i} variants={commentSlide}
-                        initial="hidden" animate="visible" exit="exit" layout
-                        className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-emerald-50/50 rounded-xl min-[320px]:rounded-2xl border border-emerald-100 hover:border-emerald-200 transition-all"
+                      {myReview && (
+                        <motion.button
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleDeleteReview}
+                          className="px-3 min-[400px]:px-5 py-1.5 min-[400px]:py-2 border border-red-200 text-red-500 text-[11px] min-[400px]:text-sm font-bold rounded-lg min-[400px]:rounded-xl hover:bg-red-50 transition-colors"
+                        >
+                          Delete
+                        </motion.button>
+                      )}
+                    </div>
+                  </form>
+                )}
+                {!user && (
+                  <div className="mb-5 sm:mb-6 p-3 min-[320px]:p-4 bg-emerald-50 rounded-xl min-[320px]:rounded-2xl border border-emerald-100 text-center">
+                    <p className="text-xs min-[320px]:text-sm text-gray-500">
+                      <Link
+                        to="/login"
+                        className="text-emerald-600 font-bold hover:underline"
                       >
-                        <div className="w-7 min-[320px]:w-9 h-7 min-[320px]:h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xs min-[320px]:text-sm flex-shrink-0 overflow-hidden">
-                          {r.avatar ? <img src={r.avatar} alt={r.username} className="w-full h-full object-cover" /> : r.username?.[0]?.toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1 min-[320px]:gap-2 mb-1 flex-wrap">
-                            <p className="text-[10px] min-[320px]:text-xs font-black text-gray-800">{r.username}</p>
-                            <div className="flex items-center gap-0.5">
-                              {[1,2,3,4,5].map(s => (
-                                <svg key={s} className="w-2.5 min-[320px]:w-3 h-2.5 min-[320px]:h-3" viewBox="0 0 24 24"
-                                  fill={s <= r.rating ? "#059669" : "none"} stroke="#059669" strokeWidth="2">
-                                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                </svg>
-                              ))}
-                            </div>
-                            {r.updated_at !== r.created_at && <span className="text-[9px] min-[320px]:text-[10px] text-gray-400">edited</span>}
+                        Sign in
+                      </Link>{" "}
+                      to leave a review
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-col gap-2 min-[320px]:gap-3">
+                  {reviews.length === 0 ? (
+                    <div className="text-center py-6 min-[320px]:py-8">
+                      <p className="text-xl min-[320px]:text-2xl mb-2">⭐</p>
+                      <p className="text-xs min-[320px]:text-sm text-gray-400 font-medium">
+                        No reviews yet. Be the first!
+                      </p>
+                    </div>
+                  ) : (
+                    <AnimatePresence>
+                      {reviews.slice(0, 3).map((r, i) => (
+                        <motion.div
+                          key={r.id}
+                          custom={i}
+                          variants={commentSlide}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          layout
+                          className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-emerald-50/50 rounded-xl min-[320px]:rounded-2xl border border-emerald-100 hover:border-emerald-200 transition-all"
+                        >
+                          <div className="w-7 min-[400px]:w-9 h-7 min-[400px]:h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-[11px] min-[400px]:text-sm flex-shrink-0 overflow-hidden">
+                            {r.avatar ? (
+                              <img
+                                src={r.avatar}
+                                alt={r.username}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              r.username?.[0]?.toUpperCase()
+                            )}
                           </div>
-                          {r.content && <p className="text-xs min-[320px]:text-sm text-gray-600 leading-relaxed">{r.content}</p>}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                )}
-                {reviews.length > 3 && (
-                  <button onClick={() => setShowAllReviews(true)} className="w-full mt-1 min-[320px]:mt-2 py-2 min-[320px]:py-2.5 rounded-xl border border-emerald-200 text-emerald-600 text-[10px] min-[320px]:text-xs font-bold hover:bg-emerald-50 transition-colors">
-                    View all {reviews.length} reviews
-                  </button>
-                )}
-              </div>
-            </motion.div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1 min-[320px]:gap-2 mb-1 flex-wrap">
+                              <p className="text-[10px] min-[400px]:text-[13px] font-black text-gray-800">
+                                {r.username}
+                              </p>
+                              <div className="flex items-center gap-0.5">
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                  <svg
+                                    key={s}
+                                    className="w-2.5 min-[400px]:w-3 h-2.5 min-[400px]:h-3"
+                                    viewBox="0 0 24 24"
+                                    fill={s <= r.rating ? "#FBA11F" : "none"}
+                                    stroke="#FBA11F"
+                                    strokeWidth="2"
+                                  >
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                  </svg>
+                                ))}
+                              </div>
+                              {r.updated_at !== r.created_at && (
+                                <span className="text-[9px] min-[400px]:text-[10px] text-gray-400">
+                                  edited
+                                </span>
+                              )}
+                            </div>
+                            {r.content && (
+                              <p className="text-[11px] min-[400px]:text-[13px] text-gray-600 leading-relaxed">
+                                {r.content}
+                              </p>
+                            )}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  )}
+                  {reviews.length > 3 && (
+                    <button
+                      onClick={() => setShowAllReviews(true)}
+                      className="w-full mt-1 min-[320px]:mt-2 py-2 min-[320px]:py-2.5 rounded-xl border border-emerald-200 text-emerald-600 text-[10px] min-[320px]:text-xs font-bold hover:bg-emerald-50 transition-colors"
+                    >
+                      View all {reviews.length} reviews
+                    </button>
+                  )}
+                </div>
+              </motion.div>
             </div>
           </div>
 
           {}
-          <div className="contents lg:flex lg:flex-col lg:gap-6">
-            <div className="order-2 lg:order-none flex flex-col gap-5 sm:gap-6">
-            {}
-            <motion.div
-              custom={0}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-            >
-              <p className="text-[9px] min-[400px]:text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">
-                {recipe.category}
-              </p>
-              <h1 className="text-base min-[400px]:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-black text-gray-900 leading-tight mb-2 break-words">
-                {recipe.title}
-              </h1>
-              {reviewStats.avg_rating && (
+          <div className="contents md:flex md:flex-col md:gap-6">
+            <div className="order-2 md:order-none flex flex-col gap-5 sm:gap-6">
+              {}
+              <motion.div
+                custom={0}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+              >
+                <p className="text-[9px] min-[400px]:text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">
+                  {recipe.category}
+                </p>
+                <h1 className="text-base min-[400px]:text-lg sm:text-2xl md:text-3xl xl:text-4xl font-black text-gray-900 leading-tight mb-2 break-words">
+                  {recipe.title}
+                </h1>
+                {reviewStats.avg_rating && (
                   <div className="flex pb-5 items-center gap-0.5 min-[320px]:gap-1 ml-auto">
-                    {[1,2,3,4,5].map(s => (
-                      <svg key={s} className="w-3 min-[320px]:w-4 h-3 min-[320px]:h-4" viewBox="0 0 24 24"
-                        fill={s <= Math.round(reviewStats.avg_rating) ? "#059669" : "none"}
-                        stroke="#059669" strokeWidth="2">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <svg
+                        key={s}
+                        className="w-3 min-[320px]:w-4 h-3 min-[320px]:h-4"
+                        viewBox="0 0 24 24"
+                        fill={
+                          s <= Math.round(reviewStats.avg_rating)
+                            ? "#059669"
+                            : "none"
+                        }
+                        stroke="#059669"
+                        strokeWidth="2"
+                      >
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                       </svg>
                     ))}
-                    <span className="text-xs min-[320px]:text-sm font-bold text-emerald-700 ml-0.5 min-[320px]:ml-1">{reviewStats.avg_rating}</span>
+                    <span className="text-xs min-[320px]:text-sm font-bold text-emerald-700 ml-0.5 min-[320px]:ml-1">
+                      {reviewStats.avg_rating}
+                    </span>
                   </div>
                 )}
                 <p className="text-[10px] min-[400px]:text-xs sm:text-sm text-gray-400">
-                By{" "}
-                <Link
-                  to={`/profile/${recipe.username}`}
-                  className="text-emerald-600 font-bold hover:text-emerald-700 transition-colors"
-                >
-                  {recipe.username || "Chef"}
-                </Link>
-              </p>
-            </motion.div>
-            {}
-            <motion.div
-              custom={1}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-              className="flex items-center gap-1 flex-wrap"
-            >
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={handleLike}
-                className={`flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full border text-[10px] min-[320px]:text-xs sm:text-sm font-bold transition-all duration-200 ${
-                  liked
-                    ? "bg-red-50 border-red-200 text-red-500"
-                    : "border-gray-200 text-gray-500 hover:border-red-200 hover:text-red-400"
-                }`}
-              >
-                <motion.span
-                  animate={liked ? { scale: [1, 1.5, 1] } : {}}
-                  transition={{ duration: 0.3 }}
-                >
-                  <HeartIcon
-                    filled={liked}
-                    className={`w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4 ${liked ? "text-red-500" : ""}`}
-                  />
-                </motion.span>
-                {liked ? "Liked" : "Like"}
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={handleSave}
-                className={`flex items-center gap-1 px-2.5 min-[320px]:px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border text-[10px] min-[320px]:text-[11px] sm:text-sm font-bold transition-all duration-200 ${
-                  saved
-                    ? "bg-emerald-50 border-emerald-200 text-emerald-600"
-                    : "border-gray-200 text-gray-500 hover:border-emerald-200 hover:text-emerald-500"
-                }`}
-              >
-                <motion.span
-                  animate={saved ? { rotate: [0, -15, 15, 0] } : {}}
-                  transition={{ duration: 0.4 }}
-                >
-                  <BookmarkIcon
-                    filled={saved}
-                    className={`w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4 ${saved ? "text-emerald-600" : ""}`}
-                  />
-                </motion.span>
-                {saved ? "Saved" : "Save"}
-              </motion.button>
-
-              {isOwner ? (
-                <>
-                  <motion.div
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                  By{" "}
+                  <Link
+                    to={`/profile/${recipe.username}`}
+                    className="text-emerald-600 font-bold hover:text-emerald-700 transition-colors"
                   >
-                    <Link
-                      to={`/edit/${recipe.id}-${toSlug(recipe.title)}`}
-                      className="flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full border border-gray-200 text-[10px] min-[320px]:text-xs sm:text-sm font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all"
-                    >
-                      <EditIcon className="w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4" /> Edit
-                    </Link>
-                  </motion.div>
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => setShowDeleteModal(true)}
-                    className="flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full border border-red-200 text-[10px] min-[320px]:text-xs sm:text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
-                  >
-                    <TrashIcon className="w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4" /> Delete
-                  </motion.button>
-                </>
-              ) : (
-                user && (
-                  <motion.div
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                  >
-                    <Link
-                      to={`/messages/${recipe.user_id}`}
-                      state={{ presetUsername: recipe.username }}
-                      className="flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full bg-emerald-600 text-white text-[10px] min-[320px]:text-xs sm:text-sm font-bold hover:bg-emerald-700 transition-all shadow-sm"
-                    >
-                      <MailIcon className="w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4" /> Message
-                    </Link>
-                  </motion.div>
-                )
-              )}
-            </motion.div>
-
-            {recipe.likes_count > 0 && (
-              <motion.div
-                custom={2}
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-              >
-                <button
-                  onClick={handleOpenLikes}
-                  className="text-xs min-[320px]:text-sm font-semibold text-gray-500 hover:text-emerald-600 transition-colors"
-                >
-                  Liked by{" "}
-                  <span className="font-bold text-gray-900">
-                    {recipe.likes_count}
-                  </span>{" "}
-                  {recipe.likes_count === 1 ? "person" : "people"}
-                </button>
-              </motion.div>
-            )}
-
-            {}
-            {(recipe.prep_time ||
-              recipe.cook_time ||
-              recipe.servings ||
-              totalTime) > 0 && (
-              <motion.div
-                custom={2}
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-4 gap-1.5"
-              >
-                {recipe.prep_time ? (
-                  <StatCard
-                    icon={<ClockIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />}
-                    label="Prep"
-                    value={`${recipe.prep_time}m`}
-                  />
-                ) : null}
-                {recipe.cook_time ? (
-                  <StatCard
-                    icon={<FlameIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />}
-                    label="Cook"
-                    value={`${recipe.cook_time}m`}
-                  />
-                ) : null}
-                {totalTime > 0 ? (
-                  <StatCard
-                    icon={<ZapIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />}
-                    label="Total"
-                    value={`${totalTime}m`}
-                  />
-                ) : null}
-                {recipe.servings ? (
-                  <StatCard
-                    icon={<UsersIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />}
-                    label="Serves"
-                    value={recipe.servings}
-                  />
-                ) : null}
-              </motion.div>
-            )}
-
-            {}
-            {recipe.description && (
-              <motion.div
-                custom={3}
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-              >
-                <h2 className="text-[10px] min-[400px]:text-xs sm:text-sm font-black text-gray-900 uppercase tracking-wide mb-1.5">
-                  Summary
-                </h2>
-                <p className="text-gray-500 leading-relaxed text-[11px] min-[400px]:text-xs sm:text-sm sm:text-base">
-                  {recipe.description}
+                    {recipe.username || "Chef"}
+                  </Link>
                 </p>
               </motion.div>
-            )}
+              {}
+              <motion.div
+                custom={1}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                className="flex items-center gap-1 flex-wrap"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={handleLike}
+                  className={`flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full border text-[10px] min-[320px]:text-xs sm:text-sm font-bold transition-all duration-200 ${
+                    liked
+                      ? "bg-[#FBA11F]/10 border-[#FBA11F]/30 text-[#FBA11F]"
+                      : "border-gray-200 text-gray-500 hover:border-[#FBA11F]/40 hover:text-[#FBA11F]"
+                  }`}
+                >
+                  <motion.span
+                    animate={liked ? { scale: [1, 1.5, 1] } : {}}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <HeartIcon
+                      filled={liked}
+                      className={`w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4 ${liked ? "text-[#FBA11F]" : ""}`}
+                    />
+                  </motion.span>
+                  {liked ? "Liked" : "Like"}
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={handleSave}
+                  className={`flex items-center gap-1 px-2.5 min-[320px]:px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border text-[10px] min-[320px]:text-[11px] sm:text-sm font-bold transition-all duration-200 ${
+                    saved
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                      : "border-gray-200 text-gray-500 hover:border-emerald-200 hover:text-emerald-500"
+                  }`}
+                >
+                  <motion.span
+                    animate={saved ? { rotate: [0, -15, 15, 0] } : {}}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <BookmarkIcon
+                      filled={saved}
+                      className={`w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4 ${saved ? "text-emerald-600" : ""}`}
+                    />
+                  </motion.span>
+                  {saved ? "Saved" : "Save"}
+                </motion.button>
+
+                {isOwner ? (
+                  <>
+                    <motion.div
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                    >
+                      <Link
+                        to={`/edit/${recipe.id}-${toSlug(recipe.title)}`}
+                        className="flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full border border-gray-200 text-[10px] min-[320px]:text-xs sm:text-sm font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all"
+                      >
+                        <EditIcon className="w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4" />{" "}
+                        Edit
+                      </Link>
+                    </motion.div>
+                    <motion.button
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => setShowDeleteModal(true)}
+                      className="flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full border border-red-200 text-[10px] min-[320px]:text-xs sm:text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
+                    >
+                      <TrashIcon className="w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4" />{" "}
+                      Delete
+                    </motion.button>
+                  </>
+                ) : (
+                  user && (
+                    <motion.div
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                    >
+                      <Link
+                        to={`/messages/${recipe.user_id}`}
+                        state={{ presetUsername: recipe.username }}
+                        className="flex items-center gap-1 min-[320px]:gap-1.5 px-2.5 min-[320px]:px-4 py-1.5 min-[320px]:py-2 rounded-full bg-emerald-600 text-white text-[10px] min-[320px]:text-xs sm:text-sm font-bold hover:bg-emerald-700 transition-all shadow-sm"
+                      >
+                        <MailIcon className="w-3.5 min-[320px]:w-4 h-3.5 min-[320px]:h-4" />{" "}
+                        Message
+                      </Link>
+                    </motion.div>
+                  )
+                )}
+              </motion.div>
+
+              {recipe.likes_count > 0 && (
+                <motion.div
+                  custom={2}
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <button
+                    onClick={handleOpenLikes}
+                    className="text-xs min-[320px]:text-sm font-semibold text-gray-500 hover:text-emerald-600 transition-colors"
+                  >
+                    Liked by{" "}
+                    <span className="font-bold text-gray-900">
+                      {recipe.likes_count}
+                    </span>{" "}
+                    {recipe.likes_count === 1 ? "person" : "people"}
+                  </button>
+                </motion.div>
+              )}
+
+              {}
+              {(recipe.prep_time ||
+                recipe.cook_time ||
+                recipe.servings ||
+                totalTime) > 0 && (
+                <motion.div
+                  custom={2}
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  className="grid grid-cols-4 gap-1.5"
+                >
+                  {recipe.prep_time ? (
+                    <StatCard
+                      icon={
+                        <ClockIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />
+                      }
+                      label="Prep"
+                      value={`${recipe.prep_time}m`}
+                    />
+                  ) : null}
+                  {recipe.cook_time ? (
+                    <StatCard
+                      icon={
+                        <FlameIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />
+                      }
+                      label="Cook"
+                      value={`${recipe.cook_time}m`}
+                    />
+                  ) : null}
+                  {totalTime > 0 ? (
+                    <StatCard
+                      icon={
+                        <ZapIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />
+                      }
+                      label="Total"
+                      value={`${totalTime}m`}
+                    />
+                  ) : null}
+                  {recipe.servings ? (
+                    <StatCard
+                      icon={
+                        <UsersIcon className="w-4 min-[320px]:w-5 h-4 min-[320px]:h-5" />
+                      }
+                      label="Serves"
+                      value={recipe.servings}
+                    />
+                  ) : null}
+                </motion.div>
+              )}
+
+              {}
+              {recipe.description && (
+                <motion.div
+                  custom={3}
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <h2 className="text-[10px] min-[400px]:text-xs sm:text-sm font-black text-gray-900 uppercase tracking-wide mb-1.5">
+                    Summary
+                  </h2>
+                  <p className="text-gray-500 leading-relaxed text-[11px] min-[400px]:text-xs sm:text-sm sm:text-base">
+                    {recipe.description}
+                  </p>
+                </motion.div>
+              )}
             </div>
 
             {}
-            <div className="order-5 lg:order-none">
-            <motion.div
-              variants={fadeIn}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="border-t-2 border-gray-100 pt-5 sm:pt-6"
-            >
-              <div className="flex items-center gap-2 mb-3 sm:mb-5">
-                <div className="flex items-center gap-1 min-[400px]:gap-1.5 bg-gray-50 border border-gray-200 px-2 py-1 min-[400px]:py-1.5 rounded-xl">
-                  <MessageIcon className="w-3.5 h-3.5 text-gray-500" />
-                  <h2 className="text-xs min-[400px]:text-sm font-black text-gray-700">Comments</h2>
-                </div>
-                <span className="text-[9px] min-[400px]:text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 min-[400px]:px-2 py-0.5 rounded-full">
-                  {comments.length}
-                </span>
-              </div>
-              {user ? (
-                <form onSubmit={handleComment} className="flex gap-1.5 min-[320px]:gap-2 mb-5 sm:mb-6">
-                  <div className="w-7 min-[320px]:w-9 h-7 min-[320px]:h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xs min-[320px]:text-sm flex-shrink-0 mt-0.5">
-                    {user.username?.[0]?.toUpperCase() || "?"}
+            <div className="order-5 md:order-none">
+              <motion.div
+                variants={fadeIn}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="border-t-2 border-gray-100 pt-5 sm:pt-6"
+              >
+                <div className="flex items-center gap-2 mb-3 sm:mb-5">
+                  <div className="flex items-center gap-1 min-[400px]:gap-1.5 bg-gray-50 border border-gray-200 px-2 py-1 min-[400px]:py-1.5 rounded-xl">
+                    <MessageIcon className="w-3.5 h-3.5 text-gray-500" />
+                    <h2 className="text-xs min-[400px]:text-sm font-black text-gray-700">
+                      Comments
+                    </h2>
                   </div>
-                  <div className="flex-1 flex gap-1.5 min-[320px]:gap-2 min-w-0">
-                    <input
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder="Leave a note..."
-                      className="flex-1 min-w-0 px-2.5 min-[320px]:px-4 py-2 min-[320px]:py-2.5 rounded-lg min-[320px]:rounded-xl border border-gray-200 text-xs min-[320px]:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all bg-white placeholder:text-gray-400"
-                    />
-                    <motion.button
-                      whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                      type="submit"
-                      disabled={commentSubmitting || !comment.trim()}
-                      className="bg-emerald-600 text-white px-3 min-[320px]:px-5 py-2 min-[320px]:py-2.5 rounded-lg min-[320px]:rounded-xl text-xs min-[320px]:text-sm font-bold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex-shrink-0"
-                    >
-                      {commentSubmitting ? "..." : "Post"}
-                    </motion.button>
-                  </div>
-                </form>
-              ) : (
-                <div className="mb-5 sm:mb-6 p-3 min-[320px]:p-4 bg-gray-50 rounded-xl min-[320px]:rounded-2xl border border-gray-100 text-center">
-                  <p className="text-xs min-[320px]:text-sm text-gray-500">
-                    <Link to="/login" className="text-emerald-600 font-bold hover:underline">Sign in</Link>{" "}
-                    to leave a comment
-                  </p>
+                  <span className="text-[9px] min-[400px]:text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 min-[400px]:px-2 py-0.5 rounded-full">
+                    {comments.length}
+                  </span>
                 </div>
-              )}
-              <div className="flex flex-col gap-2 min-[320px]:gap-3">
-                {comments.length === 0 ? (
-                  <div className="text-center py-6 min-[320px]:py-8">
-                    <div className="w-10 min-[320px]:w-12 h-10 min-[320px]:h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-2 min-[320px]:mb-3">
-                      <MessageIcon className="w-5 min-[320px]:w-6 h-5 min-[320px]:h-6 text-gray-300" />
+                {user ? (
+                  <form
+                    onSubmit={handleComment}
+                    className="flex gap-1.5 min-[320px]:gap-2 mb-5 sm:mb-6"
+                  >
+                    <div className="w-7 min-[320px]:w-9 h-7 min-[320px]:h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xs min-[320px]:text-sm flex-shrink-0 mt-0.5">
+                      {user.username?.[0]?.toUpperCase() || "?"}
                     </div>
-                    <p className="text-xs min-[320px]:text-sm text-gray-400 font-medium">No comments yet. Be the first!</p>
-                  </div>
-                ) : (
-                  <AnimatePresence>
-                    {comments.slice(0, 3).map((c, i) => (
-                      <motion.div
-                        key={c.id} custom={i} variants={commentSlide}
-                        initial="hidden" animate="visible" exit="exit" layout
-                        className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-white rounded-xl min-[320px]:rounded-2xl border border-gray-100 group hover:border-gray-200 transition-all"
+                    <div className="flex-1 flex gap-1.5 min-[320px]:gap-2 min-w-0">
+                      <input
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Leave a note..."
+                        className="flex-1 min-w-0 px-2.5 min-[320px]:px-4 py-2 min-[320px]:py-2.5 rounded-lg min-[320px]:rounded-xl border border-gray-200 text-xs min-[320px]:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all bg-white placeholder:text-gray-400"
+                      />
+                      <motion.button
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        type="submit"
+                        disabled={commentSubmitting || !comment.trim()}
+                        className="bg-emerald-600 text-white px-3 min-[320px]:px-5 py-2 min-[320px]:py-2.5 rounded-lg min-[320px]:rounded-xl text-xs min-[320px]:text-sm font-bold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex-shrink-0"
                       >
-                        <div className="w-7 min-[320px]:w-9 h-7 min-[320px]:h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-black text-xs min-[320px]:text-sm flex-shrink-0">
-                          {c.username?.[0]?.toUpperCase() || "?"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[10px] font-black text-gray-800 mb-0.5">{c.username}</p>
-                          <p className="text-[11px] min-[400px]:text-xs sm:text-sm text-gray-600 leading-relaxed break-words">{c.content}</p>
-                        </div>
-                        {user?.id === c.user_id && (
-                          <motion.button
-                            whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                            onClick={() => handleDeleteComment(c.id)}
-                            className="opacity-0 group-hover:opacity-100 text-xs text-red-400 hover:text-red-600 transition-all flex-shrink-0 w-5 min-[320px]:w-6 h-5 min-[320px]:h-6 flex items-center justify-center rounded-full hover:bg-red-50"
-                          >
-                            ✕
-                          </motion.button>
-                        )}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                        {commentSubmitting ? "..." : "Post"}
+                      </motion.button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="mb-5 sm:mb-6 p-3 min-[320px]:p-4 bg-gray-50 rounded-xl min-[320px]:rounded-2xl border border-gray-100 text-center">
+                    <p className="text-xs min-[320px]:text-sm text-gray-500">
+                      <Link
+                        to="/login"
+                        className="text-emerald-600 font-bold hover:underline"
+                      >
+                        Sign in
+                      </Link>{" "}
+                      to leave a comment
+                    </p>
+                  </div>
                 )}
-                {comments.length > 3 && (
-                  <button onClick={() => setShowAllComments(true)} className="w-full mt-1 min-[320px]:mt-2 py-2 min-[320px]:py-2.5 rounded-xl border border-gray-200 text-gray-600 text-[10px] min-[320px]:text-xs font-bold hover:bg-gray-50 transition-colors">
-                    View all {comments.length} comments
-                  </button>
-                )}
-              </div>
-            </motion.div>
+                <div className="flex flex-col gap-2 min-[320px]:gap-3">
+                  {comments.length === 0 ? (
+                    <div className="text-center py-6 min-[320px]:py-8">
+                      <div className="w-10 min-[320px]:w-12 h-10 min-[320px]:h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-2 min-[320px]:mb-3">
+                        <MessageIcon className="w-5 min-[320px]:w-6 h-5 min-[320px]:h-6 text-gray-300" />
+                      </div>
+                      <p className="text-xs min-[320px]:text-sm text-gray-400 font-medium">
+                        No comments yet. Be the first!
+                      </p>
+                    </div>
+                  ) : (
+                    <AnimatePresence>
+                      {comments.slice(0, 3).map((c, i) => (
+                        <motion.div
+                          key={c.id}
+                          custom={i}
+                          variants={commentSlide}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          layout
+                          className="flex items-start gap-2 min-[320px]:gap-3 p-3 min-[320px]:p-4 bg-white rounded-xl min-[320px]:rounded-2xl border border-gray-100 group hover:border-gray-200 transition-all"
+                        >
+                          <div className="w-7 min-[320px]:w-9 h-7 min-[320px]:h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-black text-xs min-[320px]:text-sm flex-shrink-0">
+                            {c.username?.[0]?.toUpperCase() || "?"}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-black text-gray-800 mb-0.5">
+                              {c.username}
+                            </p>
+                            <p className="text-[11px] min-[400px]:text-xs sm:text-sm text-gray-600 leading-relaxed break-words">
+                              {c.content}
+                            </p>
+                          </div>
+                          {user?.id === c.user_id && (
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleDeleteComment(c.id)}
+                              className="opacity-0 group-hover:opacity-100 text-xs text-red-400 hover:text-red-600 transition-all flex-shrink-0 w-5 min-[320px]:w-6 h-5 min-[320px]:h-6 flex items-center justify-center rounded-full hover:bg-red-50"
+                            >
+                              ✕
+                            </motion.button>
+                          )}
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  )}
+                  {comments.length > 3 && (
+                    <button
+                      onClick={() => setShowAllComments(true)}
+                      className="w-full mt-1 min-[320px]:mt-2 py-2 min-[320px]:py-2.5 rounded-xl border border-gray-200 text-gray-600 text-[10px] min-[320px]:text-xs font-bold hover:bg-gray-50 transition-colors"
+                    >
+                      View all {comments.length} comments
+                    </button>
+                  )}
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -1298,11 +1520,19 @@ export default function RecipeDetail() {
       )}
 
       {showAllReviews && (
-        <AllReviewsModal reviews={reviews} onClose={() => setShowAllReviews(false)} />
+        <AllReviewsModal
+          reviews={reviews}
+          onClose={() => setShowAllReviews(false)}
+        />
       )}
 
       {showAllComments && (
-        <AllCommentsModal comments={comments} user={user} handleDeleteComment={handleDeleteComment} onClose={() => setShowAllComments(false)} />
+        <AllCommentsModal
+          comments={comments}
+          user={user}
+          handleDeleteComment={handleDeleteComment}
+          onClose={() => setShowAllComments(false)}
+        />
       )}
     </div>
   );

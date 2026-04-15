@@ -86,7 +86,7 @@ export default function Messages() {
   useEffect(() => {
     if (!user) { navigate('/login'); return; }
     getConversations()
-      .then((res) => setConversations(res.data))
+      .then((res) => setConversations(Array.isArray(res.data) ? res.data : []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [user, navigate]);
@@ -95,7 +95,7 @@ export default function Messages() {
     if (userId) {
       setMessages([]);
       getMessages(userId)
-        .then((res) => setMessages(res.data))
+        .then((res) => setMessages(Array.isArray(res.data) ? res.data : []))
         .catch(console.error);
     } else {
       setMessages([]);

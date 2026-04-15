@@ -384,8 +384,8 @@ export default function Profile() {
         const recipeList = profileRes.data.recipes || [];
         setProfile(user);
         setRecipes(recipeList);
-        setFollowers(followersRes.data);
-        setFollowing(followingRes.data);
+        setFollowers(Array.isArray(followersRes.data) ? followersRes.data : []);
+        setFollowing(Array.isArray(followingRes.data) ? followingRes.data : []);
         setIsFollowing(followersRes.data.some((f) => f.id === currentUser?.id));
         setEditForm({
           username: user.username,
@@ -405,7 +405,7 @@ export default function Profile() {
   useEffect(() => {
     if (activeTab === "liked" && likedRecipes.length === 0) {
       getLikedRecipes(identifier)
-        .then((res) => setLikedRecipes(res.data))
+        .then((res) => setLikedRecipes(Array.isArray(res.data) ? res.data : []))
         .catch(console.error);
     }
   }, [activeTab, identifier]);
@@ -576,7 +576,7 @@ export default function Profile() {
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={() => setEditing(true)}
-                        className="flex items-center gap-1.5 px-3 min-[320px]:px-4 py-2 rounded-full border border-gray-200 text-xs min-[320px]:text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 min-[400px]:px-4 py-1.5 min-[400px]:py-2 rounded-full border border-gray-200 text-[10px] min-[400px]:text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
                       >
                         ✏️ Edit Profile
                       </motion.button>
@@ -586,7 +586,7 @@ export default function Profile() {
                       >
                         <Link
                           to="/messages"
-                          className="inline-flex items-center gap-1.5 px-3 min-[320px]:px-4 py-2 rounded-full text-xs min-[320px]:text-sm font-bold text-white transition-colors"
+                          className="inline-flex items-center gap-1.5 px-2.5 min-[400px]:px-4 py-1.5 min-[400px]:py-2 rounded-full text-[10px] min-[400px]:text-sm font-bold text-white transition-colors"
                           style={{ background: "#2A9D72" }}
                         >
                           ✉️ Messages
@@ -598,7 +598,7 @@ export default function Profile() {
                       >
                         <Link
                           to="/create"
-                          className="inline-flex items-center gap-1.5 px-3 min-[320px]:px-4 py-2 rounded-full text-xs min-[320px]:text-sm font-bold transition-colors"
+                          className="inline-flex items-center gap-1.5 px-2.5 min-[400px]:px-4 py-1.5 min-[400px]:py-2 rounded-full text-[10px] min-[400px]:text-sm font-bold transition-colors"
                           style={{ color: "#2A9D72", background: "#E8F7F2" }}
                         >
                           🍳 New Recipe
@@ -662,7 +662,7 @@ export default function Profile() {
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-gray-500 mb-1.5">
+                      <label className="block text-[10px] min-[400px]:text-xs font-bold text-gray-500 mb-1.5">
                         Username
                       </label>
                       <input
@@ -670,13 +670,13 @@ export default function Profile() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, username: e.target.value })
                         }
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 transition-all"
+                        className="w-full px-3 min-[400px]:px-4 py-2 min-[400px]:py-2.5 rounded-lg min-[400px]:rounded-xl border border-gray-200 text-[10px] min-[400px]:text-sm focus:outline-none focus:ring-2 transition-all"
                         style={{ "--tw-ring-color": "#2A9D72" }}
                         placeholder="Username"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-500 mb-1.5">
+                      <label className="block text-[10px] min-[400px]:text-xs font-bold text-gray-500 mb-1.5">
                         Avatar URL
                       </label>
                       <input
@@ -684,14 +684,14 @@ export default function Profile() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, avatar: e.target.value })
                         }
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 transition-all"
+                        className="w-full px-3 min-[400px]:px-4 py-2 min-[400px]:py-2.5 rounded-lg min-[400px]:rounded-xl border border-gray-200 text-[10px] min-[400px]:text-sm focus:outline-none focus:ring-2 transition-all"
                         placeholder="https://..."
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 mb-1.5">
+                    <label className="block text-[10px] min-[400px]:text-xs font-bold text-gray-500 mb-1.5">
                       Bio
                     </label>
                     <textarea
@@ -700,24 +700,24 @@ export default function Profile() {
                         setEditForm({ ...editForm, bio: e.target.value })
                       }
                       rows={2}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none focus:outline-none focus:ring-2 transition-all"
+                      className="w-full px-3 min-[400px]:px-4 py-2 min-[400px]:py-2.5 rounded-lg min-[400px]:rounded-xl border border-gray-200 text-[10px] min-[400px]:text-sm resize-none focus:outline-none focus:ring-2 transition-all"
                       placeholder="Tell the world about your cooking style..."
                     />
                   </div>
 
                   {}
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 mb-2">
+                    <label className="block text-[10px] min-[400px]:text-xs font-bold text-gray-500 mb-2">
                       Profile Colour
                     </label>
-                    <div className="flex gap-1.5 min-[320px]:gap-2 flex-wrap ">
+                    <div className="flex gap-1.5 min-[400px]:gap-2 flex-wrap ">
                       {COVER_GRADIENTS.map((g, i) => (
                         <button
                           key={i}
                           onClick={() =>
                             setEditForm({ ...editForm, coverIndex: i })
                           }
-                          className={`w-6 min-[320px]:w-8 h-6 min-[320px]:h-8 rounded-[10px] min-[320px]:rounded-xl transition-all ${
+                          className={`w-6 min-[400px]:w-8 h-6 min-[400px]:h-8 rounded-[10px] min-[400px]:rounded-xl transition-all ${
                             editForm.coverIndex === i
                               ? "ring-2 ring-offset-2 ring-gray-400 scale-110"
                               : "hover:scale-105"
@@ -734,13 +734,13 @@ export default function Profile() {
                     </p>
                   )}
 
-                  <div className="flex gap-1.5 min-[320px]:gap-2 pt-1">
+                  <div className="flex gap-1.5 min-[400px]:gap-2 pt-1">
                     <motion.button
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={handleSaveProfile}
                       disabled={saving}
-                      className="flex-1 text-white text-[11px] min-[320px]:text-sm font-bold px-2 min-[320px]:px-4 py-2 min-[320px]:py-2.5 rounded-[10px] min-[320px]:rounded-xl transition-all disabled:opacity-60 flex items-center justify-center gap-1 min-[320px]:gap-2 whitespace-nowrap"
+                      className="flex-1 text-white text-[10px] min-[400px]:text-sm font-bold px-2 min-[400px]:px-4 py-2 min-[400px]:py-2.5 rounded-lg min-[400px]:rounded-xl transition-all disabled:opacity-60 flex items-center justify-center gap-1 min-[400px]:gap-2 whitespace-nowrap"
                       style={{ background: "#2A9D72" }}
                     >
                       {saving ? (
@@ -751,7 +751,7 @@ export default function Profile() {
                             duration: 0.8,
                             ease: "linear",
                           }}
-                          className="h-3 min-[320px]:h-4 w-3 min-[320px]:w-4"
+                          className="h-3 min-[400px]:h-4 w-3 min-[400px]:w-4"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -781,7 +781,7 @@ export default function Profile() {
                         setEditing(false);
                         setSaveError("");
                       }}
-                      className="flex-1 border border-gray-200 text-[11px] min-[320px]:text-sm font-bold px-2 min-[320px]:px-4 py-2 min-[320px]:py-2.5 rounded-[10px] min-[320px]:rounded-xl hover:bg-gray-50 transition-colors text-gray-700 whitespace-nowrap"
+                      className="flex-1 border border-gray-200 text-[10px] min-[400px]:text-sm font-bold px-2 min-[400px]:px-4 py-2 min-[400px]:py-2.5 rounded-lg min-[400px]:rounded-xl hover:bg-gray-50 transition-colors text-gray-700 whitespace-nowrap"
                     >
                       Cancel
                     </motion.button>
@@ -857,10 +857,10 @@ export default function Profile() {
                             : "bg-[#fafaf8] border border-gray-100"
                         }`}
                       >
-                        <span className="text-base min-[420px]:text-xl font-black text-gray-900">
+                        <span className="text-sm min-[400px]:text-xl font-black text-gray-900">
                           {stat.value}
                         </span>
-                        <span className="text-[9px] min-[420px]:text-xs text-gray-500 font-medium mt-0.5">
+                        <span className="text-[8px] min-[400px]:text-xs text-gray-500 font-medium mt-0.5">
                           {stat.label}
                         </span>
                       </motion.button>
@@ -880,7 +880,7 @@ export default function Profile() {
           animate="visible"
           className="mb-4 min-[320px]:mb-5 w-full overflow-x-auto pb-1"
         >
-          <div className="flex gap-0.5 min-[320px]:gap-1 bg-white border border-gray-100 rounded-[14px] min-[320px]:rounded-2xl p-1 shadow-sm w-fit">
+          <div className="flex gap-0.5 min-[400px]:gap-1 bg-white border border-gray-100 rounded-[14px] min-[400px]:rounded-2xl p-1 shadow-sm w-fit">
             {[
               {
                 key: "recipes",
@@ -897,7 +897,7 @@ export default function Profile() {
                 key={tab.key}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1 min-[320px]:gap-1.5 px-3 min-[320px]:px-5 py-1.5 min-[320px]:py-2 rounded-[10px] min-[320px]:rounded-xl text-[10px] min-[320px]:text-sm font-bold transition-all ${
+                className={`flex items-center gap-1 min-[400px]:gap-1.5 px-3 min-[400px]:px-5 py-1.5 min-[400px]:py-2 rounded-[10px] min-[400px]:rounded-xl text-[10px] min-[400px]:text-sm font-bold transition-all ${
                   activeTab === tab.key
                     ? "text-white shadow-sm"
                     : "text-gray-500 hover:text-gray-700"
@@ -981,7 +981,7 @@ export default function Profile() {
                 variants={stagger}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 min-[320px]:grid-cols-2 md:grid-cols-3 gap-3 min-[320px]:gap-4"
+                className="grid grid-cols-1 min-[400px]:grid-cols-2 md:grid-cols-3 gap-3 min-[400px]:gap-4"
               >
                 {displayRecipes.map((recipe, i) => (
                   <motion.div key={recipe.id} variants={fadeUp} custom={i}>

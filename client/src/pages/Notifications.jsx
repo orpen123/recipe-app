@@ -125,7 +125,7 @@ export default function Notifications() {
     setLoading(true);
     getNotifications()
       .then((res) => {
-        setNotifications(res.data);
+        setNotifications(Array.isArray(res.data) ? res.data : []);
       })
       .catch(console.error)
       .finally(() => setLoading(false));

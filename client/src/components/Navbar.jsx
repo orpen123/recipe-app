@@ -114,8 +114,9 @@ export default function Navbar() {
         if (!user) { setUnread(0); return; }
         getNotifications()
             .then(res => {
-                setRecentNotifications(res.data);
-                setUnread(res.data.filter(n => !n.is_read).length);
+                const data = Array.isArray(res.data) ? res.data : [];
+                setRecentNotifications(data);
+                setUnread(data.filter(n => !n.is_read).length);
             })
             .catch(console.error);
     }, [user, setUnread]);

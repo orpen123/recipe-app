@@ -279,7 +279,7 @@ export default function Favorites() {
   useEffect(() => {
     if (!user) return navigate('/login');
     getSavedRecipes()
-      .then((res) => setRecipes(res.data))
+      .then((res) => setRecipes(Array.isArray(res.data) ? res.data : []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [user]);

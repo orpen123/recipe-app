@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap');
 
-
 @import "tailwindcss";
 
 html {
@@ -11,27 +10,17 @@ html {
   box-sizing: border-box;
 }
 
-/* * {
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-} */
-
 button, a, [role="button"] {
   cursor: pointer;
 }
 
-/* ── Scrollbar hide ── */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { scrollbar-width: none; }
 
-/* ── Custom scrollbar for chat ── */
 .custom-scroll::-webkit-scrollbar { width: 4px; }
 .custom-scroll::-webkit-scrollbar-track { background: transparent; }
 .custom-scroll::-webkit-scrollbar-thumb { background: #d1fae5; border-radius: 99px; }
 
-/* ── Line clamp ── */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -40,9 +29,6 @@ button, a, [role="button"] {
   overflow: hidden;
 }
 
-
-
-/* ── Custom fonts ──────────────────────────────────────────────────────────── */
 :root {
   --font-display: 'Playfair Display', serif;
   --font-body: 'DM Sans', sans-serif;
@@ -57,7 +43,6 @@ body {
   font-family: var(--font-display);
 }
 
-/* ── Hero overlay (multi-stop gradient Tailwind can't express) ─────────────── */
 .hero-overlay {
   background: linear-gradient(
     105deg,
@@ -67,7 +52,6 @@ body {
   );
 }
 
-/* ── Line clamp helpers (needed for cross-browser support) ─────────────────── */
 .clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -75,7 +59,6 @@ body {
   overflow: hidden;
 }
 
-/* ── Skeleton shimmer (custom keyframe) ────────────────────────────────────── */
 @keyframes shimmer {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.4; }
@@ -83,11 +66,4 @@ body {
 
 .animate-shimmer {
   animation: shimmer 1.4s ease-in-out infinite;
-}
-
-/* ── Prevent iOS Safari Auto-Zoom on Form Inputs ───────────────────────────── */
-@media screen and (max-width: 768px) {
-  input, select, textarea {
-    font-size: 16px !important;
-  }
 }

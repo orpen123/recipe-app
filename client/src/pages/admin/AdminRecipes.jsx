@@ -17,7 +17,7 @@ export default function AdminRecipes() {
   const fetchRecipes = () => {
     setLoading(true);
     api.get('/admin/recipes')
-      .then(res => setRecipes(res.data))
+      .then(res => setRecipes(Array.isArray(res.data) ? res.data : []))
       .catch(console.error)
       .finally(() => setLoading(false));
   };

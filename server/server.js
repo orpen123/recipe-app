@@ -25,9 +25,6 @@ function isAllowedOrigin(origin) {
   if (/\.vercel\.app$/.test(origin)) return true;
   return false;
 }
-// function isAllowedOrigin(origin) {
-//   return true;
-// }
 
 const io = new Server(server, {
   cors: {
@@ -90,12 +87,14 @@ app.use((err, req, res, next) => {
 
 io.on('connection', (socket) => {
   socket.on('setup', (userId) => {
+    if (!userId) return;
     socket.userId = userId.toString();
     socket.join(userId.toString());
     socket.emit('connected');
   });
 
   socket.on('join_chat', (otherUserId) => {
+    if (!otherUserId) return;
     socket.activeChat = otherUserId.toString();
   });
 
@@ -104,12 +103,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('typing', (receiverId) => {
+    if (!receiverId) return;
     if (socket.userId) {
       socket.to(receiverId.toString()).emit('typing', socket.userId);
     }
   });
 
   socket.on('stop_typing', (receiverId) => {
+    if (!receiverId) return;
     if (socket.userId) {
       socket.to(receiverId.toString()).emit('stop_typing', socket.userId);
     }

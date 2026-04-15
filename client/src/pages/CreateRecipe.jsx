@@ -28,21 +28,22 @@ const itemVariants = {
 
 function Field({ label, children, required }) {
   return (
-    <motion.div variants={itemVariants} className="space-y-1.5">
-      <label className="block text-[10px] min-[500px]:text-sm font-bold text-gray-700">
+    <motion.div variants={itemVariants} className="space-y-1">
+      <label className="block text-[10px] min-[400px]:text-[11px] min-[500px]:text-sm font-bold text-gray-700">
         {label}
         {required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
+
       {children}
     </motion.div>
   );
 }
 
 const inputCls =
-  "w-full px-3 py-2 min-[500px]:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-[11px] min-[500px]:text-sm transition-all bg-white placeholder:text-gray-400";
+  "w-full px-2.5 min-[400px]:px-3 py-1.5 min-[400px]:py-2 min-[500px]:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-[10px] min-[400px]:text-[11px] min-[500px]:text-sm transition-all bg-white placeholder:text-gray-400";
 
 const ingBase =
-  "px-2 min-[400px]:px-3 py-2 min-[320px]:py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-[11px] min-[400px]:text-xs min-[500px]:text-sm transition-all bg-white placeholder:text-gray-400";
+  "px-2 min-[400px]:px-3 py-1.5 min-[400px]:py-2 min-[500px]:py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-[10px] min-[400px]:text-[11px] min-[500px]:text-sm transition-all bg-white placeholder:text-gray-400";
 
 export default function CreateRecipe() {
   const { idAndSlug } = useParams();
@@ -338,7 +339,7 @@ export default function CreateRecipe() {
               { name: "servings", label: "Servings", placeholder: "4" },
             ].map(({ name, label, placeholder }) => (
               <div key={name}>
-                <label className="block text-[9px] min-[400px]:text-xs font-bold text-gray-700 mb-1 min-[400px]:mb-1.5 leading-tight">
+                <label className="block text-[9px] min-[400px]:text-[10px] min-[500px]:text-xs font-bold text-gray-700 mb-1 leading-tight">
                   {label}
                 </label>
                 <input
@@ -348,16 +349,16 @@ export default function CreateRecipe() {
                   value={form[name]}
                   onChange={handleChange}
                   placeholder={placeholder}
-                  className="w-full px-2 min-[400px]:px-3 py-2 min-[400px]:py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-[11px] min-[400px]:text-sm transition-all bg-white placeholder:text-gray-400"
+                  className="w-full px-2 min-[400px]:px-3 py-1.5 min-[400px]:py-2 min-[500px]:py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent text-[10px] min-[400px]:text-[11px] min-[500px]:text-sm transition-all bg-white placeholder:text-gray-400"
                 />
               </div>
             ))}
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <label className="block text-[10px] min-[500px]:text-sm font-bold text-gray-700 mb-2 min-[500px]:mb-3">
+            <label className="block text-[10px] min-[400px]:text-[11px] min-[500px]:text-sm font-bold text-gray-700 mb-1.5 min-[500px]:mb-3">
               Ingredients
-              <span className="ml-1.5 text-[9px] min-[500px]:text-xs font-normal text-gray-400">
+              <span className="ml-1.5 text-[9px] min-[400px]:text-[10px] min-[500px]:text-xs font-normal text-gray-400">
                 ({ingredients.filter((i) => i.name.trim()).length} added)
               </span>
             </label>
@@ -386,7 +387,7 @@ export default function CreateRecipe() {
                         handleIngredient(i, "quantity", e.target.value)
                       }
                       placeholder="Qty"
-                      className={`${ingBase} w-16 min-[400px]:w-20 min-[500px]:w-24 shrink-0`}
+                      className={`${ingBase} w-[68px] min-[400px]:w-20 min-[500px]:w-24 shrink-0`}
                     />
                     {ingredients.length > 1 && (
                       <motion.button
